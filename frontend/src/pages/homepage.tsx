@@ -3,21 +3,35 @@ import AddTask from "../components/addTask"
 import { useState } from "react";
 import TaskList from "../components/taskList"
 import emoji from "../assets/emoji.png"
+import { Link } from "react-router-dom";
 
 const Homeapage = () => {
 
-    const { tasks } = useGlobalContext();
+    const { tasks, isAuthenticated } = useGlobalContext();
     const [showAddTask, setShowAddTask] = useState<boolean | false>(false);
 
     return (
         <>
-            <div className="w-full">
+            <div className="w-full relative">
 
-                <h3 className="md:text-sm text-xs hover:underline mb-2 flex justify-end w-full">
+                {isAuthenticated ?
+                    <h3
+                        onClick={() => {
+                            localStorage.removeItem("token")
+                            window.location.reload();
+                        }}
+                        className="absolute top-0 right-0 md:text-sm text-xs hover:underline cursor-pointer">
+                        logout
+                    </h3>
+                    :
+                    <Link
+                        to={'/login'}
+                        className="absolute top-0 right-0 md:text-sm text-xs hover:underline cursor-pointer">
+                        login
+                    </Link>
+                }
 
-                </h3>
-
-                <div className="flex items-center justify-between w-full">
+                <div className="flex items-center justify-between w-full pt-9">
                     <div className="flex items-center gap-2">
                         <img className="md:size-12 size-6" src={emoji} alt="Iphone cool emoji" />
                         <h1 className="md:text-5xl text-2xl font-semibold">

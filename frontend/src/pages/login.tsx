@@ -36,7 +36,9 @@ const login = () => {
                 localStorage.setItem("token", response.data.token)
                 toast.success("Logged in successfully!");
                 navigate('/');
-                window.location.reload();
+                setTimeout(() => {
+                    window.location.reload();
+                }, 1000)
             }
         } catch (error) {
             toast.error("Something went wrong.")
@@ -60,7 +62,7 @@ const login = () => {
                         value={formData.email}
                         onChange={handleChange}
                         name="email"
-                        type="text"
+                        type="email"
                         className="w-full py-5 border-neutral-200 md:text-sm text-xs"
                     />
                 </div>
