@@ -25,9 +25,9 @@ const addTask = ({
         category: string;
     }
 
-    const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2N2VlZGZiYjNhNDI0ODYxMjJkMTk2ZDUiLCJpYXQiOjE3NDM3MzYyNzIsImV4cCI6MTc0NDM0MTA3MiwiYXVkIjoidG9kbyIsImlzcyI6InRvZG8ifQ.kwOTrt6FzOtL1LyxDpFFBWs4RwDU3Q7m1vR4Y2PhrCs'
+    const token = localStorage.getItem("token");
 
-    const { fetchTasks } = useGlobalContext();
+    const { fetchTasks, isAuthenticated } = useGlobalContext();
 
     const [formData, setFormData] = useState<TaskType>({
         title: "",
@@ -87,7 +87,13 @@ const addTask = ({
     return (
         <div className="w-full border border-l-0 border-r-0 md:py-4 p-3 mt-6 border-neutral-200">
             <div
-                onClick={() => setShowAddTask(!showAddTask)}
+                onClick={() => {
+                    if (isAuthenticated) {
+                        setShowAddTask(!showAddTask)
+                    } else {
+                        toast.error("You need to login first.")
+                    }
+                }}
                 className="flex items-center gap-2 w-full">
                 <button>
                     <Plus color="gray" size={'15px'} />
@@ -98,7 +104,7 @@ const addTask = ({
                     className="w-full outline-none border-none md:text-sm text-xs"
                     type="text"
                 />
-            </div >
+            </div>
 
             {/* Popup */}
             {showAddTask &&

@@ -28,7 +28,7 @@ const editTask = ({
         category: string | undefined;
     }
 
-    const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2N2VlZGZiYjNhNDI0ODYxMjJkMTk2ZDUiLCJpYXQiOjE3NDM3MzYyNzIsImV4cCI6MTc0NDM0MTA3MiwiYXVkIjoidG9kbyIsImlzcyI6InRvZG8ifQ.kwOTrt6FzOtL1LyxDpFFBWs4RwDU3Q7m1vR4Y2PhrCs'
+    const token = localStorage.getItem("token");
 
     const { fetchTasks, tasks } = useGlobalContext();
 

@@ -4,9 +4,10 @@ import { PencilLine, Trash } from "lucide-react";
 import { useState } from "react";
 import DeleteTask from "../components/deleteTask"
 import EditTask from "../components/editTask"
+import { toast } from "react-hot-toast"
 
 const taskList = () => {
-    const { tasks } = useGlobalContext();
+    const { tasks, isAuthenticated } = useGlobalContext();
     const [showDeleteTask, setShowDeleteTask] = useState<boolean | false>(false);
     const [showEditTask, setShowEditTask] = useState<boolean | false>(false);
     const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
@@ -38,7 +39,13 @@ const taskList = () => {
                                 Edit Task
                             </h4>
                             <PencilLine
-                                onClick={() => handleEditClick(item._id)}
+                                onClick={() => {
+                                    if (isAuthenticated) {
+                                        handleEditClick(item._id)
+                                    } else {
+                                        toast.error("You need to login first.")
+                                    }
+                                }}
                                 size={'25px'}
                                 className="hover:bg-neutral-200 p-1 rounded-md"
                             />
@@ -48,7 +55,13 @@ const taskList = () => {
                                 Delete Task
                             </h4>
                             <Trash
-                                onClick={() => handleDeleteClick(item._id, item.title)}
+                                onClick={() => {
+                                    if (isAuthenticated) {
+                                        handleDeleteClick(item._id, item.title)
+                                    } else {
+                                        toast.error("You need to login first.")
+                                    }
+                                }}
                                 size={'25px'}
                                 className="hover:bg-neutral-200 p-1 rounded-md"
                             />

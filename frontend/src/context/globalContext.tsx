@@ -1,5 +1,5 @@
 import axios from "axios";
-import { createContext, useContext, useState, ReactNode, useEffect } from "react";
+import { createContext, useContext, useState, ReactNode, useEffect, SetStateAction } from "react";
 import { toast } from "react-hot-toast";
 
 interface Task {
@@ -9,6 +9,8 @@ interface Task {
 }
 
 interface GlobalContextPropsType {
+    isAuthenticated: boolean;
+    setIsAuthenticated: React.Dispatch<SetStateAction<boolean>>;
     tasks: Task[];
     setTasks: React.Dispatch<React.SetStateAction<Task[]>>;
     fetchTasks: () => Promise<void>;
@@ -21,8 +23,20 @@ const GlobalContext = createContext<GlobalContextPropsType | undefined>(undefine
 // create provider
 export const GlobalProvider = ({ children }: { children: ReactNode }) => {
 
+    const [isAuthenticated, setIsAuthenticated] = useState<boolean | false>(false);
     const [tasks, setTasks] = useState<Task[]>([]);
-    const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2N2VlZGZiYjNhNDI0ODYxMjJkMTk2ZDUiLCJpYXQiOjE3NDM3MzYyNzIsImV4cCI6MTc0NDM0MTA3MiwiYXVkIjoidG9kbyIsImlzcyI6InRvZG8ifQ.kwOTrt6FzOtL1LyxDpFFBWs4RwDU3Q7m1vR4Y2PhrCs'
+
+    const token = localStorage.getItem("token");
+
+    useEffect(() => {
+        if (token) {
+            setIsAuthenticated(true)
+        }
+        else {
+            setIsAuthenticated(false);
+        }
+    }, [token])
+
 
     const fetchTasks = async () => {
         try {
@@ -58,7 +72,7 @@ export const GlobalProvider = ({ children }: { children: ReactNode }) => {
 
 
     return (
-        <GlobalContext.Provider value={{ tasks, setTasks, fetchTasks, deleteTask }}>
+        <GlobalContext.Provider value={{ tasks, setTasks, fetchTasks, deleteTask, isAuthenticated, setIsAuthenticated }}>
             {children}
         </GlobalContext.Provider>
     );
