@@ -31,7 +31,7 @@ const login = () => {
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
-            const response = await axios.post(`http://${import.meta.env.VITE_BACKEND_URI}/api/user/login`, formData)
+            const response = await axios.post(`${import.meta.env.VITE_BACKEND_URI}/api/user/login`, formData)
             if (response.status == 200) {
                 localStorage.setItem("token", response.data.token)
                 toast.success("Logged in successfully!");

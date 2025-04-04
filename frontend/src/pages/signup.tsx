@@ -33,7 +33,7 @@ const signup = () => {
         e.preventDefault();
         console.log(formData)
         try {
-            const response = await axios.post(`http://${import.meta.env.VITE_BACKEND_URI}/api/user/signup`, formData)
+            const response = await axios.post(`${import.meta.env.VITE_BACKEND_URI}/api/user/signup`, formData)
             if (response.status == 200) {
                 toast.success("Successfully created account!");
                 navigate('/login');

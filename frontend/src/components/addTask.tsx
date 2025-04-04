@@ -60,7 +60,7 @@ const addTask = ({
         }
 
         try {
-            const response = await axios.post(`http://${import.meta.env.VITE_BACKEND_URI}/api/task`,
+            const response = await axios.post(`${import.meta.env.VITE_BACKEND_URI}/api/task`,
                 formData,
                 {
                     headers: {

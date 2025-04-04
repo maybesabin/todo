@@ -68,7 +68,7 @@ const editTask = ({
         e.preventDefault();
 
         try {
-            const response = await axios.put(`http://${import.meta.env.VITE_BACKEND_URI}/api/task/${_id}`,
+            const response = await axios.put(`${import.meta.env.VITE_BACKEND_URI}/api/task/${_id}`,
                 formData,
                 {
                     headers: {

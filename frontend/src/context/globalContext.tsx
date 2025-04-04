@@ -40,7 +40,7 @@ export const GlobalProvider = ({ children }: { children: ReactNode }) => {
 
     const fetchTasks = async () => {
         try {
-            const response = await axios.get(`http://${import.meta.env.VITE_BACKEND_URI}/api/task`, {
+            const response = await axios.get(`${import.meta.env.VITE_BACKEND_URI}/api/task`, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                     'Content-Typ': "application/json"
@@ -54,7 +54,7 @@ export const GlobalProvider = ({ children }: { children: ReactNode }) => {
 
     const deleteTask = async (taskId: string | null) => {
         try {
-            await axios.delete(`http://${import.meta.env.VITE_BACKEND_URI}/api/task/${taskId}`, {
+            await axios.delete(`${import.meta.env.VITE_BACKEND_URI}/api/task/${taskId}`, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                     'Content-Type': "application/json"
