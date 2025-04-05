@@ -9,12 +9,12 @@ const login = () => {
 
     interface User {
         email: string,
-        password: string
+        password: string,
     }
 
     const [formData, setFormData] = useState<User>({
         email: '',
-        password: ''
+        password: '',
     })
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
