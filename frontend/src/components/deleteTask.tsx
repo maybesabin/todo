@@ -17,7 +17,7 @@ const deleteTask = ({
     const { deleteTask } = useGlobalContext();
 
     return (
-        <div className={`z-50 fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white md:p-6 p-4 rounded-lg flex flex-col items-start gap-6 md:w-[30rem] w-[90%]`}>
+        <div className={`z-50 fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white md:p-6 p-4 rounded-lg flex flex-col items-start gap-6 md:w-[30rem] w-[90%] ${showDeleteTask ? "visible scale-100" : "invisible scale-0"} transition-all duration-200`}>
             <div className="flex items-center justify-between w-full">
                 <h3 className="md:text-sm text-xs">
                     Do you want to delete the task "{title}" ?

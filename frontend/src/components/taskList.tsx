@@ -71,14 +71,11 @@ const taskList = () => {
             ))}
 
             {/* Delete Task */}
-            {showDeleteTask &&
-                <DeleteTask title={selectedTaskTitle} showDeleteTask={showDeleteTask} setShowDeleteTask={setShowDeleteTask} _id={selectedTaskId} />
-            }
+            <DeleteTask title={selectedTaskTitle} showDeleteTask={showDeleteTask} setShowDeleteTask={setShowDeleteTask} _id={selectedTaskId} />
 
             {/* Edit Task */}
-            {showEditTask &&
-                <EditTask showEditTask={showEditTask} setShowEditTask={setShowEditTask} _id={selectedTaskId} />
-            }
+            <EditTask showEditTask={showEditTask} setShowEditTask={setShowEditTask} _id={selectedTaskId} />
+
             {(showDeleteTask || showEditTask) &&
                 <div className="z-40 w-full h-screen fixed inset-0 opacity-50 bg-black backdrop-blur-2xl" />
             }

@@ -107,60 +107,59 @@ const addTask = ({
             </div>
 
             {/* Popup */}
-            {showAddTask &&
-                <form
-                    onSubmit={addTask}
-                    className={`z-50 fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white md:p-6 p-4 rounded-lg flex flex-col items-start gap-6 md:w-[30rem] w-[90%]`}>
-                    <div className="flex items-center justify-between w-full">
-                        <h3 className="md:text-lg text-sm font-medium">Add New Task</h3>
-                        <X size={'20px'} onClick={() => setShowAddTask(!showAddTask)} />
-                    </div>
+            <form
+                onSubmit={addTask}
+                className={`z-50 fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white md:p-6 p-4 rounded-lg flex flex-col items-start gap-6 md:w-[30rem] w-[90%] 
+                ${showAddTask ? "visible scale-100" : "invisible scale-0"} transition-all duration-200`}>
+                <div className="flex items-center justify-between w-full">
+                    <h3 className="md:text-lg text-sm font-medium">Add New Task</h3>
+                    <X size={'20px'} onClick={() => setShowAddTask(!showAddTask)} />
+                </div>
 
-                    <div className="flex flex-col gap-1.5 w-full">
-                        <label className="md:text-sm text-xs" htmlFor="title">Task Title</label>
-                        <Input
-                            name="title"
-                            value={formData.title}
-                            onChange={handleChange}
-                            className="md:text-sm text-xs border-neutral-200"
-                            placeholder="Doing chores"
-                        />
-                    </div>
-                    <div className="flex flex-col gap-1.5 w-full">
-                        <label className="md:text-sm text-xs" htmlFor="description">Task Description</label>
-                        <textarea
-                            name="description"
-                            value={formData.description}
-                            onChange={handleChange}
-                            style={{ resize: 'none' }}
-                            className="outline-none h-48 border border-neutral-200 p-2 rounded-md md:text-sm text-xs"
-                            placeholder="Doing chores"
-                        />
-                    </div>
-                    <div className="flex flex-col gap-1.5 w-full">
-                        <label className="md:text-sm text-xs" htmlFor="category">Task Category</label>
-                        <Select
-                            onValueChange={handleSelectChange}
-                            value={formData.category}
-                        >
-                            <SelectTrigger className="border-neutral-200 w-full md:text-sm text-xs">
-                                <SelectValue placeholder="Select Category" />
-                            </SelectTrigger>
-                            <SelectContent className="bg-white border-neutral-200">
-                                <SelectItem value="chores">Household Chores</SelectItem>
-                                <SelectItem value="work">Work</SelectItem>
-                                <SelectItem value="school">School</SelectItem>
-                            </SelectContent>
-                        </Select>
-                    </div>
-                    <button
-                        className="md:text-sm text-xs bg-black text-white font-medium px-3 py-2 cursor-pointer hover:bg-neutral-800 rounded-lg"
-                        type="submit"
+                <div className="flex flex-col gap-1.5 w-full">
+                    <label className="md:text-sm text-xs" htmlFor="title">Task Title</label>
+                    <Input
+                        name="title"
+                        value={formData.title}
+                        onChange={handleChange}
+                        className="md:text-sm text-xs border-neutral-200"
+                        placeholder="Doing chores"
+                    />
+                </div>
+                <div className="flex flex-col gap-1.5 w-full">
+                    <label className="md:text-sm text-xs" htmlFor="description">Task Description</label>
+                    <textarea
+                        name="description"
+                        value={formData.description}
+                        onChange={handleChange}
+                        style={{ resize: 'none' }}
+                        className="outline-none h-48 border border-neutral-200 p-2 rounded-md md:text-sm text-xs"
+                        placeholder="Doing chores"
+                    />
+                </div>
+                <div className="flex flex-col gap-1.5 w-full">
+                    <label className="md:text-sm text-xs" htmlFor="category">Task Category</label>
+                    <Select
+                        onValueChange={handleSelectChange}
+                        value={formData.category}
                     >
-                        Add Task
-                    </button>
-                </form>
-            }
+                        <SelectTrigger className="border-neutral-200 w-full md:text-sm text-xs">
+                            <SelectValue placeholder="Select Category" />
+                        </SelectTrigger>
+                        <SelectContent className="bg-white border-neutral-200">
+                            <SelectItem value="chores">Household Chores</SelectItem>
+                            <SelectItem value="work">Work</SelectItem>
+                            <SelectItem value="school">School</SelectItem>
+                        </SelectContent>
+                    </Select>
+                </div>
+                <button
+                    className="md:text-sm text-xs bg-black text-white font-medium px-3 py-2 cursor-pointer hover:bg-neutral-800 rounded-lg"
+                    type="submit"
+                >
+                    Add Task
+                </button>
+            </form>
         </div>
     )
 }
