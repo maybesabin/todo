@@ -1,7 +1,7 @@
 import axios from "axios"
-import { Plus, X } from "lucide-react"
+import { BriefcaseBusiness, ListCheck, MessageSquare, Package, Plus, Trophy, UserRound, Wallet, X } from "lucide-react"
 import { toast } from "react-hot-toast";
-import { SetStateAction, useState } from "react"
+import { SetStateAction, useRef, useState } from "react"
 import { Input } from "@/components/ui/input"
 import {
     Select,
@@ -11,6 +11,7 @@ import {
     SelectValue,
 } from "@/components/ui/select"
 import { useGlobalContext } from "@/context/globalContext";
+import { GoogleGenAI } from "@google/genai";
 
 const addTask = ({
     showAddTask,
@@ -23,6 +24,47 @@ const addTask = ({
         title: string;
         description: string;
         category: string;
+    }
+
+    const ai = new GoogleGenAI({ apiKey: import.meta.env.VITE_GEMINI_API_KEY });
+    const debounceTimeout = useRef<NodeJS.Timeout | null>(null);
+    const [isGenerating, setIsGenerating] = useState(false);
+
+    const generateContent = async (title: string) => {
+        if (!title.trim()) return;
+        setIsGenerating(true);
+
+        try {
+            const descriptionPrompt = `For a todo task titled "${title}", generate a brief and specific task description. Keep it under 1-2 sentences and make it actionable.`
+            const categoryPrompt = `
+             Recommend the most appropriate category for task titled "${title}" from ONLY these options: "chores" (for household tasks), "work" (for professional tasks), "personal" (for personal learning/growth), "finances" (for money related), "social" (for family time/mental health), "goals" (for certain tasks to be done), or "miscellaneous" (for others). Write response in one word and small caps.
+            `
+
+            //make both calls at once
+            const [descriptionResponse, categoryResponse] = await Promise.all([
+                ai.models.generateContent({
+                    model: "gemini-2.0-flash",
+                    contents: [{ role: "user", parts: [{ text: descriptionPrompt }] }]
+                }),
+                ai.models.generateContent({
+                    model: "gemini-2.0-flash",
+                    contents: [{ role: "user", parts: [{ text: categoryPrompt }] }]
+                })
+            ]);
+
+
+            const generatedDescription = descriptionResponse?.text?.trim() || "";
+            const generatedCategory = categoryResponse?.text?.trim() || "";
+
+            setFormData(prevData => ({
+                ...prevData,
+                description: generatedDescription,
+                category: generatedCategory
+            }));
+        } catch (error: any) {
+            console.log(error.message)
+            toast.error("Failed to generate description");
+        }
     }
 
     const token = localStorage.getItem("token");
@@ -41,6 +83,17 @@ const addTask = ({
             ...prevData,
             [name]: value
         }))
+
+        if (name === 'title') {
+            if (debounceTimeout.current) {
+                clearTimeout(debounceTimeout.current);
+            }
+            debounceTimeout.current = setTimeout(() => {
+                if (value.trim()) {
+                    generateContent(value);
+                }
+            }, 500) //wait 500ms after user stop typing
+        }
     }
 
     // Handles select dropdown changes separately
@@ -83,9 +136,18 @@ const addTask = ({
         }
     }
 
+    const categories = [
+        { title: 'Household Chores', icon: <ListCheck /> },
+        { title: 'Work', icon: <BriefcaseBusiness /> },
+        { title: 'Personal', icon: <UserRound /> },
+        { title: 'Finances', icon: <Wallet /> },
+        { title: 'Social', icon: <MessageSquare /> },
+        { title: 'Goals', icon: <Trophy /> },
+        { title: 'Miscellaneous', icon: <Package /> },
+    ];
 
     return (
-        <div className="w-full border border-l-0 border-r-0 md:py-4 p-3 mt-6 border-neutral-200">
+        <div className="w-full md:py-4 p-3 mt-6">
             <div
                 onClick={() => {
                     if (isAuthenticated) {
@@ -127,29 +189,31 @@ const addTask = ({
                     />
                 </div>
                 <div className="flex flex-col gap-1.5 w-full">
-                    <label className="md:text-sm text-xs" htmlFor="description">Task Description</label>
+                    <label className="md:text-sm text-xs" htmlFor="description">
+                        Task Description
+                    </label>
                     <textarea
                         name="description"
                         value={formData.description}
                         onChange={handleChange}
                         style={{ resize: 'none' }}
                         className="outline-none h-48 border border-neutral-200 p-2 rounded-md md:text-sm text-xs"
-                        placeholder="Doing chores"
+                        placeholder={isGenerating ? "Generating description..." : "Take out the trash at 9 am"}
                     />
                 </div>
                 <div className="flex flex-col gap-1.5 w-full">
                     <label className="md:text-sm text-xs" htmlFor="category">Task Category</label>
                     <Select
                         onValueChange={handleSelectChange}
-                        value={formData.category}
+                        value={formData.category.trim()}
                     >
                         <SelectTrigger className="border-neutral-200 w-full md:text-sm text-xs">
                             <SelectValue placeholder="Select Category" />
                         </SelectTrigger>
                         <SelectContent className="bg-white border-neutral-200">
-                            <SelectItem value="chores">Household Chores</SelectItem>
-                            <SelectItem value="work">Work</SelectItem>
-                            <SelectItem value="school">School</SelectItem>
+                            {categories.map((item, idx) => (
+                                <SelectItem key={idx} value={item.title.toLowerCase()}>{item.icon}{item.title}</SelectItem>
+                            ))}
                         </SelectContent>
                     </Select>
                 </div>
