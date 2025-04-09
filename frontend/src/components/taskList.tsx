@@ -1,22 +1,13 @@
 import { useGlobalContext } from "@/context/globalContext"
-import { BriefcaseBusiness, ListCheck, MessageSquare, Package, PencilLine, Trash, Trophy, UserRound, Wallet } from "lucide-react";
+import { BriefcaseBusiness, ListCheck, MessageSquare, Package, PencilLine, Trophy, UserRound, Wallet } from "lucide-react";
 import { useState } from "react";
-import DeleteTask from "../components/deleteTask"
 import EditTask from "../components/editTask"
 import { toast } from "react-hot-toast"
 
 const taskList = () => {
     const { tasks, isAuthenticated } = useGlobalContext();
-    const [showDeleteTask, setShowDeleteTask] = useState<boolean | false>(false);
     const [showEditTask, setShowEditTask] = useState<boolean | false>(false);
     const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
-    const [selectedTaskTitle, setSelectedTaskTitle] = useState<string | null>(null);
-
-    const handleDeleteClick = (taskId: string, title: string) => {
-        setSelectedTaskId(taskId);
-        setSelectedTaskTitle(title);
-        setShowDeleteTask(true);
-    };
 
     const handleEditClick = (taskId: string) => {
         setSelectedTaskId(taskId);
@@ -72,30 +63,16 @@ const taskList = () => {
                                 <h4 className="md:flex hidden absolute transition-opacity duration-200 opacity-0 group-hover:opacity-100 invisible group-hover:visible w-max -top-8 -left-5 text-xs text-white px-2 py-1.5 rounded-md bg-black">
                                     Delete Task
                                 </h4>
-                                <Trash
-                                    onClick={() => {
-                                        if (isAuthenticated) {
-                                            handleDeleteClick(item._id, item.title)
-                                        } else {
-                                            toast.error("You need to login first.")
-                                        }
-                                    }}
-                                    size={'25px'}
-                                    className="hover:bg-neutral-200 p-1 rounded-md"
-                                />
                             </div>
                         </div>
                     </div>
                 )
             })}
 
-            {/* Delete Task */}
-            <DeleteTask title={selectedTaskTitle} showDeleteTask={showDeleteTask} setShowDeleteTask={setShowDeleteTask} _id={selectedTaskId} />
-
             {/* Edit Task */}
             <EditTask showEditTask={showEditTask} setShowEditTask={setShowEditTask} _id={selectedTaskId} />
 
-            {(showDeleteTask || showEditTask) &&
+            {showEditTask &&
                 <div className="z-40 w-full h-screen fixed inset-0 opacity-50 bg-black backdrop-blur-2xl" />
             }
 

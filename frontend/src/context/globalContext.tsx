@@ -1,6 +1,6 @@
 import axios from "axios";
+import { BriefcaseBusiness, ListCheck, MessageSquare, Package, Trophy, UserRound, Wallet } from "lucide-react";
 import { createContext, useContext, useState, ReactNode, useEffect, SetStateAction } from "react";
-import { toast } from "react-hot-toast";
 
 interface Task {
     title: string;
@@ -14,7 +14,7 @@ interface GlobalContextPropsType {
     tasks: Task[];
     setTasks: React.Dispatch<React.SetStateAction<Task[]>>;
     fetchTasks: () => Promise<void>;
-    deleteTask: (taskId: string | null) => Promise<void>;
+    categories: any
 }
 
 // create context
@@ -27,16 +27,6 @@ export const GlobalProvider = ({ children }: { children: ReactNode }) => {
     const [tasks, setTasks] = useState<Task[]>([]);
 
     const token = localStorage.getItem("token");
-
-    useEffect(() => {
-        if (token) {
-            setIsAuthenticated(true)
-        }
-        else {
-            setIsAuthenticated(false);
-        }
-    }, [token])
-
 
     const fetchTasks = async () => {
         try {
@@ -52,27 +42,32 @@ export const GlobalProvider = ({ children }: { children: ReactNode }) => {
         }
     }
 
-    const deleteTask = async (taskId: string | null) => {
-        try {
-            await axios.delete(`${import.meta.env.VITE_BACKEND_URI}/api/task/${taskId}`, {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                    'Content-Type': "application/json"
-                }
-            })
-            toast.success("Task deleted successfully!")
-            fetchTasks();
-        } catch (error) {
-            console.log(error)
-        }
-    }
+    const categories = [
+        { title: 'Household Chores', icon: <ListCheck /> },
+        { title: 'Work', icon: <BriefcaseBusiness /> },
+        { title: 'Personal', icon: <UserRound /> },
+        { title: 'Finances', icon: <Wallet /> },
+        { title: 'Social', icon: <MessageSquare /> },
+        { title: 'Goals', icon: <Trophy /> },
+        { title: 'Miscellaneous', icon: <Package /> },
+    ];
+
     useEffect(() => {
         fetchTasks();
     }, [])
 
+    useEffect(() => {
+        if (token) {
+            setIsAuthenticated(true)
+        }
+        else {
+            setIsAuthenticated(false);
+        }
+    }, [token])
+
 
     return (
-        <GlobalContext.Provider value={{ tasks, setTasks, fetchTasks, deleteTask, isAuthenticated, setIsAuthenticated }}>
+        <GlobalContext.Provider value={{ tasks, setTasks, fetchTasks, isAuthenticated, setIsAuthenticated, categories }}>
             {children}
         </GlobalContext.Provider>
     );

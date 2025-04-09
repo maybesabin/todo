@@ -1,7 +1,7 @@
 import axios from "axios"
-import { BriefcaseBusiness, ListCheck, MessageSquare, Package, Plus, Trophy, UserRound, Wallet, X } from "lucide-react"
+import { Plus, X } from "lucide-react"
 import { toast } from "react-hot-toast";
-import { SetStateAction, useRef, useState } from "react"
+import { SetStateAction, useEffect, useRef, useState } from "react"
 import { Input } from "@/components/ui/input"
 import {
     Select,
@@ -69,7 +69,7 @@ const addTask = ({
 
     const token = localStorage.getItem("token");
 
-    const { fetchTasks, isAuthenticated } = useGlobalContext();
+    const { fetchTasks, isAuthenticated, categories } = useGlobalContext();
 
     const [formData, setFormData] = useState<TaskType>({
         title: "",
@@ -136,15 +136,15 @@ const addTask = ({
         }
     }
 
-    const categories = [
-        { title: 'Household Chores', icon: <ListCheck /> },
-        { title: 'Work', icon: <BriefcaseBusiness /> },
-        { title: 'Personal', icon: <UserRound /> },
-        { title: 'Finances', icon: <Wallet /> },
-        { title: 'Social', icon: <MessageSquare /> },
-        { title: 'Goals', icon: <Trophy /> },
-        { title: 'Miscellaneous', icon: <Package /> },
-    ];
+    useEffect(() => {
+        if (showAddTask == false) {
+            setFormData({
+                title: '',
+                description: '',
+                category: ''
+            })
+        }
+    }, [showAddTask])
 
     return (
         <div className="w-full md:py-4 p-3 mt-6">
@@ -172,7 +172,7 @@ const addTask = ({
             <form
                 onSubmit={addTask}
                 className={`z-50 fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white md:p-6 p-4 rounded-lg flex flex-col items-start gap-6 md:w-[30rem] w-[90%] 
-                ${showAddTask ? "visible scale-100" : "invisible scale-0"} transition-all duration-200`}>
+                ${showAddTask ? "visible opacity-100 scale-100" : "invisible opacity-0 scale-75"} transition-all duration-200`}>
                 <div className="flex items-center justify-between w-full">
                     <h3 className="md:text-lg text-sm font-medium">Add New Task</h3>
                     <X size={'20px'} onClick={() => setShowAddTask(!showAddTask)} />
@@ -211,7 +211,7 @@ const addTask = ({
                             <SelectValue placeholder="Select Category" />
                         </SelectTrigger>
                         <SelectContent className="bg-white border-neutral-200">
-                            {categories.map((item, idx) => (
+                            {categories.map((item: any, idx: number) => (
                                 <SelectItem key={idx} value={item.title.toLowerCase()}>{item.icon}{item.title}</SelectItem>
                             ))}
                         </SelectContent>

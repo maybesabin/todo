@@ -30,7 +30,7 @@ const editTask = ({
 
     const token = localStorage.getItem("token");
 
-    const { fetchTasks, tasks } = useGlobalContext();
+    const { fetchTasks, tasks, categories } = useGlobalContext();
 
     const [formData, setFormData] = useState<TaskType>({
         title: "",
@@ -86,12 +86,27 @@ const editTask = ({
         }
     }
 
+    const deleteTask = async (taskId: string | null) => {
+        try {
+            await axios.delete(`${import.meta.env.VITE_BACKEND_URI}/api/task/${taskId}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': "application/json"
+                }
+            })
+            toast.success("Task deleted successfully!")
+            setShowEditTask(!showEditTask)
+            fetchTasks();
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
 
     return (
         <div className="w-full">
-            <form
-                onSubmit={editTask}
-                className={`z-50 fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white md:p-6 p-4 rounded-lg flex flex-col items-start gap-6 md:w-[30rem] w-[90%] ${showEditTask ? "visible scale-100" : "invisible scale-0"} transition-all duration-200`}>
+            <div
+                className={`z-50 fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white md:p-6 p-4 rounded-lg flex flex-col items-start gap-6 md:w-[30rem] w-[90%] ${showEditTask ? "visible opacity-100 scale-100" : "invisible opacity-0 scale-75"} transition-all duration-200`}>
                 <div className="flex items-center justify-between w-full">
                     <h3 className="md:text-lg text-sm font-medium">Edit Task</h3>
                     <X size={'20px'} onClick={() => setShowEditTask(!showEditTask)} />
@@ -123,27 +138,40 @@ const editTask = ({
                     {formData.category &&
                         <Select
                             onValueChange={handleSelectChange}
-                            value={formData.category || ""}
-                            defaultValue={formData.category || ""}
+                            value={formData.category?.trim() || ""}
+                            defaultValue={formData.category?.trim() || ""}
                         >
                             <SelectTrigger className="border-neutral-200 w-full md:text-sm text-xs">
                                 <SelectValue placeholder="Select Category" />
                             </SelectTrigger>
                             <SelectContent className="bg-white border-neutral-200">
-                                <SelectItem value="chores">Household Chores</SelectItem>
-                                <SelectItem value="work">Work</SelectItem>
-                                <SelectItem value="school">School</SelectItem>
+                                {categories.map((item: any, idx: number) => (
+                                    <SelectItem
+                                        key={idx}
+                                        value={item.title.toLowerCase() == 'household chores' ? 'chores' : item.title.toLowerCase()}
+                                    >
+                                        {item.icon}{item.title}
+                                    </SelectItem>
+                                ))}
                             </SelectContent>
                         </Select>
                     }
                 </div>
-                <button
-                    className="md:text-sm text-xs bg-black text-white font-medium px-3 py-2 cursor-pointer hover:bg-neutral-800 rounded-lg"
-                    type="submit"
-                >
-                    Save Changes
-                </button>
-            </form>
+                <div className="flex items-center justify-end gap-2 w-full">
+                    <button
+                        onClick={() => deleteTask(_id)}
+                        className="md:text-sm text-xs bg-red-600 text-white font-medium px-3 py-2 cursor-pointer hover:bg-red-500 rounded-lg"
+                    >
+                        Delete
+                    </button>
+                    <button
+                        onClick={editTask}
+                        className="md:text-sm text-xs bg-black text-white font-medium px-3 py-2 cursor-pointer hover:bg-neutral-800 rounded-lg"
+                    >
+                        Save
+                    </button>
+                </div>
+            </div>
         </div>
     )
 }
