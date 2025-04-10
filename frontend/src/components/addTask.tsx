@@ -1,5 +1,5 @@
 import axios from "axios"
-import { Plus, X } from "lucide-react"
+import { CirclePlus, X } from "lucide-react"
 import { toast } from "react-hot-toast";
 import { SetStateAction, useEffect, useRef, useState } from "react"
 import { Input } from "@/components/ui/input"
@@ -147,8 +147,8 @@ const addTask = ({
     }, [showAddTask])
 
     return (
-        <div className="w-full md:py-4 p-3 mt-6">
-            <div
+        <div className="w-full md:py-4 py-3 mt-6">
+            {/* <div
                 onClick={() => {
                     if (isAuthenticated) {
                         setShowAddTask(!showAddTask)
@@ -158,14 +158,43 @@ const addTask = ({
                 }}
                 className="flex items-center gap-2 w-full">
                 <button>
-                    <Plus color="gray" size={'15px'} />
+                    <Plus color="gray" size={'15px'}
+                        className={`${isAuthenticated ? "" : "cursor-not-allowed"}`}
+                    />
                 </button >
                 <input
                     readOnly
                     placeholder="Add New Task"
-                    className="w-full outline-none border-none md:text-sm text-xs"
+                    className={`w-full outline-none border-none md:text-sm text-xs ${isAuthenticated ? "" : "cursor-not-allowed"}`}
                     type="text"
                 />
+            </div> */}
+
+            <div className="w-full border md:p-6 p-4 rounded-lg">
+                <h2 className="font-medium md:text-lg text-sm">Add New Task</h2>
+                <div
+                    onClick={() => {
+                        if (isAuthenticated) {
+                            setShowAddTask(!showAddTask)
+                        } else {
+                            toast.error("You need to login first.")
+                        }
+                    }}
+                    className={`w-full flex items-center gap-2 mt-2 ${isAuthenticated ? "cursor-pointer" : "cursor-not-allowed"}`}
+                >
+                    <input
+                        readOnly
+                        placeholder="What needs to be done?"
+                        className={`w-full outline-none border px-2 py-3 rounded-md md:text-sm text-xs ${isAuthenticated ? "cursor-pointer" : "cursor-not-allowed"}`}
+                        type="text"
+                    />
+                    <button
+                        className={`bg-black hover:bg-neutral-800 cursor-pointer transition-all p-3 flex items-center justify-center gap-3 text-white rounded-md md:text-sm text-xs whitespace-nowrap`}
+                    >
+                        <CirclePlus size={'17px'} className={`${isAuthenticated ? "cursor-pointer" : "cursor-not-allowed"}`} />
+                        <h4 className={`${isAuthenticated ? "cursor-pointer" : "cursor-not-allowed"}`}>Add Task</h4>
+                    </button>
+                </div>
             </div>
 
             {/* Popup */}
