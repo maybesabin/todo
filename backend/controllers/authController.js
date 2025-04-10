@@ -46,3 +46,18 @@ exports.login = async (req, res) => {
         res.status(400).json({ message: error.message })
     }
 }
+
+exports.profile = async (req, res) => {
+    try {
+        const userId = req.user._id;
+
+        const user = await User.findById(userId).select("username email");
+        if (!user) {
+            return res.status(400).json({ message: "User not found!" })
+        }
+
+        res.status(200).json({ username: user.username, email: user.email });
+    } catch (error) {
+        res.status(400).json({ message: error.message })
+    }
+}

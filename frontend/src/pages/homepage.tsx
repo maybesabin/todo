@@ -2,7 +2,7 @@ import { useGlobalContext } from "../context/globalContext"
 import AddTask from "../components/addTask"
 import { useState } from "react";
 import TaskList from "../components/taskList"
-import emoji from "../assets/emoji.png"
+import emoji from "../assets/clipboard.png"
 import { Link } from "react-router-dom";
 
 const Homeapage = () => {
@@ -34,14 +34,13 @@ const Homeapage = () => {
                 <div className="flex items-center justify-between w-full pt-9">
                     <div className="flex items-center gap-2">
                         <img className="md:size-12 size-6" src={emoji} alt="Iphone cool emoji" />
-                        <h1 className="md:text-5xl text-2xl font-semibold">
+                        <h1 className="flex items-center gap-4 md:text-5xl text-2xl font-semibold">
                             Tasks
+                            <span className="md:text-sm text-xs bg-neutral-200 rounded-full py-1 px-2.5">{tasks.length}</span>
                         </h1>
                     </div>
 
-                    <h3 className="md:text-2xl text-sm">
-                        {tasks.length}
-                    </h3>
+                    <div></div>
                 </div>
 
                 <AddTask showAddTask={showAddTask} setShowAddTask={setShowAddTask} />
