@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const userSchema = new mongoose.Schema({
     username: {
         type: String,
-        required: true,
+        required: function () { return this.role !== 'admin'; }, //only required for non-admins
         minLength: 5
     },
     email: {
@@ -15,6 +15,10 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true,
         minLength: 5
+    },
+    role: {
+        type: String,
+        required: true,
     },
     tasks: [{
         type: mongoose.Schema.Types.ObjectId,
