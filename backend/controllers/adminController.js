@@ -45,7 +45,8 @@ exports.adminSignup = async (req, res) => {
         const newAdmin = new User({
             email,
             password: hashedPassword,
-            role: 'admin'
+            role: 'admin',
+            tasks: []
         })
 
         await newAdmin.save()
