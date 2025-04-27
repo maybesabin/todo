@@ -1,11 +1,13 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { Outlet, Navigate, useLocation } from "react-router-dom";
+import { ring } from "ldrs";
 
 const ProtectedRoute = ({ allowedRoles }: { allowedRoles: string[] }) => {
     const [role, setRole] = useState<string | null>(null);
     const [loading, setLoading] = useState(true);
     const location = useLocation();
+    ring.register();
 
     useEffect(() => {
         const fetchUserData = async () => {
@@ -29,7 +31,18 @@ const ProtectedRoute = ({ allowedRoles }: { allowedRoles: string[] }) => {
     }, []);
 
     if (loading) {
-        return <div>Loading...</div>;
+        return <div className="h-screen w-full flex items-center justify-center">
+            {/* @ts-ignore */}
+            <l-ring
+                size="20"
+                stroke="2"
+                bg-opacity="0"
+                speed="2"
+                color="black"
+            >
+                {/* @ts-ignore */}
+            </l-ring>
+        </div>;
     }
 
     if (role && !allowedRoles.includes(role)) {

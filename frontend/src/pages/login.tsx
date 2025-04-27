@@ -33,22 +33,27 @@ const login = () => {
 
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
-        const url = `${import.meta.env.VITE_BACKEND_URI}/api/${loginAsAdmin ? 'admin' : 'user'}/login`
+        const url = `${import.meta.env.VITE_BACKEND_URI}/api/${loginAsAdmin ? 'admin' : 'user'}/login`;
         try {
-            const response = await axios.post(url, formData)
-            if (response.status == 200) {
-                localStorage.setItem("token", response.data.token)
+            const response = await axios.post(url, formData);
+            if (response.status === 200) {
+                localStorage.setItem("token", response.data.token);
                 toast.success("Logged in successfully!");
-                response.data.role == 'user' ? navigate('/') : navigate('/dashboard')
-                setTimeout(() => {
-                    window.location.reload();
-                }, 1000)
+
+                if (response.data.role === 'user') {
+                    navigate('/');
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 1000);
+                } else {
+                    navigate('/dashboard');
+                }
             }
         } catch (error) {
-            toast.error("Something went wrong.")
-            console.log(error)
+            toast.error("Something went wrong.");
+            console.log(error);
         }
-    }
+    };
 
     return (
         <div className="w-full h-screen flex items-center justify-center md:py-12 py-6 xl:px-0 px-6">
@@ -66,8 +71,8 @@ const login = () => {
                         value={formData.email}
                         onChange={handleChange}
                         name="email"
-                        type="email"
                         className="w-full py-5 border-neutral-200 md:text-sm text-xs"
+                        type="email"
                     />
                 </div>
                 <div className="flex flex-col items-start gap-1.5 w-full">
