@@ -5,6 +5,7 @@ const {
     adminLogin,
     adminSignup,
     getUsers,
+    getTasks,
     getUser,
     deleteUser,
     updateUser
@@ -21,6 +22,7 @@ router.put("/user/:userId", authMiddleware, adminAuthMiddleware, updateUser)
 
 //other routes
 router.get("/users", authMiddleware, adminAuthMiddleware, getUsers)
+router.get("/tasks", authMiddleware, adminAuthMiddleware, getTasks)
 
 
 module.exports = router;

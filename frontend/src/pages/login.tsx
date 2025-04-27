@@ -39,7 +39,7 @@ const login = () => {
             if (response.status == 200) {
                 localStorage.setItem("token", response.data.token)
                 toast.success("Logged in successfully!");
-                navigate('/');
+                response.data.role == 'user' ? navigate('/') : navigate('/dashboard')
                 setTimeout(() => {
                     window.location.reload();
                 }, 1000)

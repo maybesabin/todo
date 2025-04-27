@@ -46,7 +46,7 @@ exports.login = async (req, res) => {
             { expiresIn: "7d", audience: "todo", issuer: "todo" }
         )
 
-        res.status(200).json({ message: "Logged in successfully!", token: token })
+        res.status(200).json({ message: "Logged in successfully!", role: user.role, token: token })
     } catch (error) {
         res.status(400).json({ message: error.message })
     }
@@ -56,12 +56,12 @@ exports.profile = async (req, res) => {
     try {
         const userId = req.user._id;
 
-        const user = await User.findById(userId).select("username email");
+        const user = await User.findById(userId).select("username email role");
         if (!user) {
             return res.status(400).json({ message: "User not found!" })
         }
 
-        res.status(200).json({ username: user.username, email: user.email });
+        res.status(200).json({ username: user.username, email: user.email, role: user.role });
     } catch (error) {
         res.status(400).json({ message: error.message })
     }

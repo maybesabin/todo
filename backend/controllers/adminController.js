@@ -1,4 +1,5 @@
 const User = require("../models/authModel");
+const Task = require("../models/taskModel")
 const jwt = require("jsonwebtoken")
 const bcrypt = require("bcryptjs")
 
@@ -67,6 +68,19 @@ exports.getUsers = async (req, res) => {
         res.status(400).json({ message: error.message })
     }
 }
+
+exports.getTasks = async (req, res) => {
+    try {
+        const tasks = await Task.find();
+        res.status(200).json({
+            message: "Tasks fetched successfully!",
+            tasks
+        })
+    } catch (error) {
+        res.status(400).json({ message: error.message })
+    }
+}
+
 
 exports.getUser = async (req, res) => {
     try {
