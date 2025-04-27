@@ -14,7 +14,9 @@ interface GlobalContextPropsType {
     tasks: Task[];
     setTasks: React.Dispatch<React.SetStateAction<Task[]>>;
     fetchTasks: () => Promise<void>;
-    categories: any
+    categories: any;
+    loading: boolean;
+    error: string | null;
 }
 
 // create context
@@ -25,10 +27,13 @@ export const GlobalProvider = ({ children }: { children: ReactNode }) => {
 
     const [isAuthenticated, setIsAuthenticated] = useState<boolean | false>(false);
     const [tasks, setTasks] = useState<Task[]>([]);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState<null | string>(null);
 
     const token = localStorage.getItem("token");
 
     const fetchTasks = async () => {
+        setLoading(true)
         try {
             const response = await axios.get(`${import.meta.env.VITE_BACKEND_URI}/api/task`, {
                 headers: {
@@ -36,9 +41,13 @@ export const GlobalProvider = ({ children }: { children: ReactNode }) => {
                     'Content-Typ': "application/json"
                 }
             })
+            setLoading(false)
             setTasks(response.data.tasks);
         } catch (error) {
             console.log(error)
+            setError("Failed to fetch tasks");
+        } finally {
+            setLoading(false)
         }
     }
 
@@ -67,7 +76,16 @@ export const GlobalProvider = ({ children }: { children: ReactNode }) => {
 
 
     return (
-        <GlobalContext.Provider value={{ tasks, setTasks, fetchTasks, isAuthenticated, setIsAuthenticated, categories }}>
+        <GlobalContext.Provider value={{
+            tasks,
+            setTasks,
+            fetchTasks,
+            isAuthenticated,
+            setIsAuthenticated,
+            categories,
+            loading,
+            error
+        }}>
             {children}
         </GlobalContext.Provider>
     );

@@ -87,10 +87,7 @@ const Homeapage = () => {
                 <AddTask showAddTask={showAddTask} setShowAddTask={setShowAddTask} />
 
                 {/* Task List */}
-                {tasks.length > 0 ?
-                    <TaskList /> :
-                    <p className="text-xs text-neutral-400 mt-4">No tasks available</p>
-                }
+                <TaskList />
             </div>
 
             {/* Overlay */}
