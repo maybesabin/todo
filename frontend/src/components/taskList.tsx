@@ -85,7 +85,7 @@ const taskList = () => {
                 )
             }
 
-            {error && <div className="text-xs text-red-500 -mt-2">{error}</div>}
+            {(error && isAuthenticated) && <div className="text-xs text-red-500 -mt-2">{error}</div>}
 
             {(tasks.length == 0 && loading == false && error == null) &&
                 <p className="text-neutral-400 text-xs -mt-2">No tasks available</p>

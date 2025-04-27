@@ -4,6 +4,7 @@ import { Eye, EyeClosed } from "lucide-react"
 import { useState } from "react"
 import toast from "react-hot-toast"
 import { Link, useNavigate } from "react-router-dom"
+import { Checkbox } from "@/components/ui/checkbox"
 
 const login = () => {
 
@@ -16,6 +17,8 @@ const login = () => {
         email: '',
         password: '',
     })
+
+    const [loginAsAdmin, setLoginAsAdmin] = useState(false)
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
@@ -30,8 +33,9 @@ const login = () => {
 
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
+        const url = `${import.meta.env.VITE_BACKEND_URI}/api/${loginAsAdmin ? 'admin' : 'user'}/login`
         try {
-            const response = await axios.post(`${import.meta.env.VITE_BACKEND_URI}/api/user/login`, formData)
+            const response = await axios.post(url, formData)
             if (response.status == 200) {
                 localStorage.setItem("token", response.data.token)
                 toast.success("Logged in successfully!");
@@ -86,6 +90,13 @@ const login = () => {
                                 className="absolute right-2" size={'20px'} />
                         }
                     </div>
+                </div>
+                <div className="flex items-center gap-2">
+                    <Checkbox
+                        checked={loginAsAdmin}
+                        onCheckedChange={() => setLoginAsAdmin(!loginAsAdmin)}
+                    />
+                    <span className="md:text-sm text-xs">Login as admin</span>
                 </div>
 
                 <button className="w-full text-white bg-[#8155d7] py-2.5 rounded-lg md:text-sm text-xs cursor-pointer hover:bg-purple-700 transition-all">
