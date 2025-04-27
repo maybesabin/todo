@@ -55,7 +55,7 @@ const signup = () => {
     }
 
     return (
-        <div className="w-full h-screen flex items-center justify-center">
+        <div className="w-full h-screen flex items-center justify-center md:py-12 py-6 xl:px-0 px-6">
             <form
                 onSubmit={handleSignup}
                 className="md:w-96 w-full flex flex-col items-start gap-6">
