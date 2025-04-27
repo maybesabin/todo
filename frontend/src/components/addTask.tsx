@@ -29,6 +29,8 @@ const addTask = ({
     const ai = new GoogleGenAI({ apiKey: import.meta.env.VITE_GEMINI_API_KEY });
     const debounceTimeout = useRef<NodeJS.Timeout | null>(null);
     const [isGenerating, setIsGenerating] = useState(false);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
 
     const generateContent = async (title: string) => {
         if (!title.trim()) return;
@@ -111,7 +113,7 @@ const addTask = ({
             toast.error("Please fill out all required fields.");
             return;
         }
-
+        setLoading(true);
         try {
             const response = await axios.post(`${import.meta.env.VITE_BACKEND_URI}/api/task`,
                 formData,
@@ -124,6 +126,7 @@ const addTask = ({
             if (response.status == 200) {
                 toast.success("Task added successfully!")
                 setShowAddTask(!showAddTask)
+                setLoading(false)
                 fetchTasks();
                 setFormData({
                     title: "",
@@ -133,6 +136,9 @@ const addTask = ({
             }
         } catch (error: any) {
             console.log(error.message)
+            setError("Failed to add task.")
+        } finally {
+            setLoading(false);
         }
     }
 
@@ -164,11 +170,11 @@ const addTask = ({
                     <input
                         readOnly
                         placeholder="What needs to be done?"
-                        className={`w-full outline-none border px-2 py-3 rounded-md md:text-sm text-xs ${isAuthenticated ? "cursor-pointer" : "cursor-not-allowed"}`}
+                        className={`w-full outline-none border px-2 md:py-3 py-2.5 rounded-md md:text-sm text-xs ${isAuthenticated ? "cursor-pointer" : "cursor-not-allowed"}`}
                         type="text"
                     />
                     <button
-                        className={`bg-black hover:bg-neutral-800 cursor-pointer transition-all p-3 flex items-center justify-center gap-3 text-white rounded-md md:text-sm text-xs whitespace-nowrap`}
+                        className={`bg-black hover:bg-neutral-800 cursor-pointer transition-all md:p-3 px-3 py-2.5 flex items-center justify-center gap-3 text-white rounded-md md:text-sm text-xs whitespace-nowrap`}
                     >
                         <CirclePlus size={'17px'} className={`${isAuthenticated ? "cursor-pointer" : "cursor-not-allowed"}`} />
                         <h4 className={`${isAuthenticated ? "cursor-pointer" : "cursor-not-allowed"}`}>Add Task</h4>
@@ -225,11 +231,14 @@ const addTask = ({
                         </SelectContent>
                     </Select>
                 </div>
+                {error && <div className="text-red-500 text-xs">{error}</div>}
                 <button
-                    className="md:text-sm text-xs bg-black text-white font-medium px-3 py-2 cursor-pointer hover:bg-neutral-800 rounded-lg"
+                    className="md:text-sm text-xs bg-black text-white font-medium px-3 py-2 cursor-pointer hover:bg-neutral-800 rounded-sm"
                     type="submit"
                 >
-                    Add Task
+                    {
+                        loading ? 'Adding Task...' : 'Add Task'
+                    }
                 </button>
             </form>
         </div>

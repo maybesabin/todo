@@ -32,6 +32,9 @@ const editTask = ({
 
     const { fetchTasks, tasks, categories } = useGlobalContext();
 
+    const [error, setError] = useState<null | string>(null);
+    const [saveLoading, setSaveLoading] = useState(false);
+    const [deleteLoading, setDeleteLoading] = useState(false);
     const [formData, setFormData] = useState<TaskType>({
         title: "",
         description: "",
@@ -66,7 +69,7 @@ const editTask = ({
 
     const editTask = async (e: React.FormEvent) => {
         e.preventDefault();
-
+        setSaveLoading(true)
         try {
             const response = await axios.put(`${import.meta.env.VITE_BACKEND_URI}/api/task/${_id}`,
                 formData,
@@ -79,14 +82,19 @@ const editTask = ({
             if (response.status == 200) {
                 toast.success("Task edited successfully!")
                 setShowEditTask(!showEditTask)
+                setSaveLoading(false)
                 fetchTasks();
             }
         } catch (error: any) {
             console.log(error.message)
+            setError("Failed to edit task.")
+        } finally {
+            setSaveLoading(false)
         }
     }
 
     const deleteTask = async (taskId: string | null) => {
+        setDeleteLoading(true)
         try {
             await axios.delete(`${import.meta.env.VITE_BACKEND_URI}/api/task/${taskId}`, {
                 headers: {
@@ -96,12 +104,15 @@ const editTask = ({
             })
             toast.success("Task deleted successfully!")
             setShowEditTask(!showEditTask)
+            setDeleteLoading(false)
             fetchTasks();
         } catch (error) {
             console.log(error)
+            setError("Failed to delete task.")
+        } finally {
+            setDeleteLoading(false)
         }
     }
-
 
     return (
         <div className="w-full">
@@ -157,18 +168,19 @@ const editTask = ({
                         </Select>
                     }
                 </div>
+                {error && <div className="text-xs text-red-500">{error}</div>}
                 <div className="flex items-center justify-end gap-2 w-full">
                     <button
                         onClick={() => deleteTask(_id)}
-                        className="md:text-sm text-xs bg-red-600 text-white font-medium px-3 py-2 cursor-pointer hover:bg-red-500 rounded-lg"
+                        className="md:text-sm text-xs bg-red-600 text-white font-medium px-3 py-2 cursor-pointer hover:bg-red-500 rounded-sm"
                     >
-                        Delete
+                        {deleteLoading ? 'Deleting...' : 'Delete'}
                     </button>
                     <button
                         onClick={editTask}
-                        className="md:text-sm text-xs bg-black text-white font-medium px-3 py-2 cursor-pointer hover:bg-neutral-800 rounded-lg"
+                        className="md:text-sm text-xs bg-black text-white font-medium px-3 py-2 cursor-pointer hover:bg-neutral-800 rounded-sm"
                     >
-                        Save
+                        {saveLoading ? 'Saving...' : 'Save'}
                     </button>
                 </div>
             </div>
