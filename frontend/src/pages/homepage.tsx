@@ -6,6 +6,7 @@ import emoji from "../assets/clipboard.png"
 import { Link } from "react-router-dom";
 import axios from "axios";
 import { LogIn, LogOut } from "lucide-react";
+import SearchTask from "../components/searchTask"
 
 const Homeapage = () => {
 
@@ -48,6 +49,7 @@ const Homeapage = () => {
                     {
                         isAuthenticated ?
                             <div className="flex items-center gap-4">
+                                <SearchTask />
                                 <h3 className="bg-[#fef3c7] h-8 w-8 rounded-full flex items-center justify-center text-red-800 md:text-base text-sm">
                                     {username?.charAt(0).toUpperCase()}
                                 </h3>
@@ -66,10 +68,10 @@ const Homeapage = () => {
                             :
                             <Link
                                 to={'/login'}
-                                className="bg-black hover:bg-neutral-800 transition-all text-white rounded-md px-3 py-2 flex items-center gap-2 cursor-pointer group">
-                                <LogIn size={'17px'} />
+                                className="flex items-center gap-2 cursor-pointer group">
+                                <LogIn size={'17px'} className="text-neutral-500 group-hover:text-black" />
                                 <p
-                                    className="md:text-sm text-xs">
+                                    className="md:text-sm text-xs text-neutral-500 group-hover:text-black">
                                     Login
                                 </p>
                             </Link>
@@ -79,7 +81,10 @@ const Homeapage = () => {
                 <AddTask showAddTask={showAddTask} setShowAddTask={setShowAddTask} />
 
                 {/* Task List */}
-                {tasks.length > 0 ? <TaskList /> : <p className="text-xs text-neutral-400 mt-4">No tasks available</p>}
+                {tasks.length > 0 ?
+                    <TaskList /> :
+                    <p className="text-xs text-neutral-400 mt-4">No tasks available</p>
+                }
             </div>
 
             {/* Overlay */}

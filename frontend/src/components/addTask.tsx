@@ -148,29 +148,8 @@ const addTask = ({
 
     return (
         <div className="w-full md:py-4 py-3 mt-6">
-            {/* <div
-                onClick={() => {
-                    if (isAuthenticated) {
-                        setShowAddTask(!showAddTask)
-                    } else {
-                        toast.error("You need to login first.")
-                    }
-                }}
-                className="flex items-center gap-2 w-full">
-                <button>
-                    <Plus color="gray" size={'15px'}
-                        className={`${isAuthenticated ? "" : "cursor-not-allowed"}`}
-                    />
-                </button >
-                <input
-                    readOnly
-                    placeholder="Add New Task"
-                    className={`w-full outline-none border-none md:text-sm text-xs ${isAuthenticated ? "" : "cursor-not-allowed"}`}
-                    type="text"
-                />
-            </div> */}
 
-            <div className="w-full border md:p-6 p-4 rounded-lg">
+            <div className="w-full rounded-lg">
                 <h2 className="font-medium md:text-lg text-sm">Add New Task</h2>
                 <div
                     onClick={() => {

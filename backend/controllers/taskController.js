@@ -91,3 +91,18 @@ exports.deleteTask = async (req, res) => {
         res.status(400).json({ message: error.message })
     }
 }
+
+exports.searchTask = async (req, res) => {
+    const { query } = req.query;
+    const userId = req.user._id;
+
+    try {
+        const todos = await Task.find({
+            user: userId,
+            title: { $regex: query, $options: 'i' }
+        })
+        res.json(todos);
+    } catch (error) {
+        res.status(400).json({ message: error.message })
+    }
+}
