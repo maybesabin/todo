@@ -7,6 +7,7 @@ import { Link } from "react-router-dom";
 import axios from "axios";
 import { LogIn, LogOut } from "lucide-react";
 import SearchTask from "../components/searchTask"
+import UserProfile from "../components/userProfile"
 
 const Homeapage = () => {
 
@@ -50,9 +51,14 @@ const Homeapage = () => {
                         isAuthenticated ?
                             <div className="flex items-center gap-4">
                                 <SearchTask />
-                                <h3 className="bg-[#fef3c7] h-8 w-8 rounded-full flex items-center justify-center text-red-800 md:text-base text-sm">
-                                    {username?.charAt(0).toUpperCase()}
-                                </h3>
+                                <div className="relative group">
+                                    <h3 className="bg-[#fef3c7] cursor-pointer h-8 w-8 rounded-full flex items-center justify-center text-red-800 md:text-base text-sm">
+                                        {username?.charAt(0).toUpperCase()}
+                                    </h3>
+                                    <div className="group-hover:visible group-hover:opacity-100 group-hover:scale-100 scale-0 opacity-0 transition-all duration-300 invisible">
+                                        <UserProfile />
+                                    </div>
+                                </div>
                                 <div className="flex items-center gap-2 cursor-pointer group">
                                     <LogOut size={'17px'} className="text-neutral-500 group-hover:text-black" />
                                     <p
