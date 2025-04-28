@@ -59,10 +59,12 @@ exports.adminSignup = async (req, res) => {
 
 exports.getUsers = async (req, res) => {
     try {
-        const users = await User.find({ role: "user" }).select('-password'); //excludes passwords
+        const users = await User.find({ role: "user" }).select('-password');
+        const admins = await User.find({ role: "admin" }).select("-password");
         res.status(200).json({
             message: "Users fetched successfully!",
-            users: users
+            users,
+            admins
         })
     } catch (error) {
         res.status(400).json({ message: error.message })
@@ -80,7 +82,6 @@ exports.getTasks = async (req, res) => {
         res.status(400).json({ message: error.message })
     }
 }
-
 
 exports.getUser = async (req, res) => {
     try {

@@ -1,10 +1,18 @@
-import { LayoutGrid, Settings } from "lucide-react"
+import { LayoutGrid, Settings, Users } from "lucide-react"
 import clipboard from "../assets/clipboard.png"
+import { SetStateAction } from "react"
 
-const sidebar = () => {
+const sidebar = ({
+    active,
+    setActive
+}: {
+    active: string,
+    setActive: React.Dispatch<SetStateAction<string>>;
+}) => {
 
     const sidebarItems = [
         { title: "Dashboard", icon: <LayoutGrid className="lg:size-[22px] size-[17px]" color="gray" /> },
+        { title: "Users", icon: <Users className="lg:size-[22px] size-[17px]" color="gray" /> },
         { title: "Settings", icon: <Settings className="lg:size-[22px] size-[17px]" color="gray" /> }
     ]
 
@@ -24,8 +32,9 @@ const sidebar = () => {
             <ul className="flex flex-col items-start gap-4 w-full">
                 {sidebarItems.map((item, idx) => (
                     <li
+                        onClick={() => setActive(item.title.toLowerCase())}
                         key={idx}
-                        className="hover:bg-neutral-100 transition-all cursor-pointer rounded-md md:p-2 p-1 w-full flex items-center gap-2"
+                        className={`${active == item.title.toLowerCase() && "bg-neutral-200/50 hover:bg-neutral-200/50"} hover:bg-neutral-100 transition-all cursor-pointer rounded-md px-2 md:py-3 py-1 w-full flex items-center gap-2`}
                     >
                         {item.icon}
                         <span className="lg:text-base text-sm md:block hidden">{item.title}</span>

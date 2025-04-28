@@ -26,7 +26,7 @@ exports.addTask = async (req, res) => {
     }
 }
 
-exports.viewTask = async (req, res) => {
+exports.viewTasks = async (req, res) => {
     try {
         const userId = req.user._id;
 
@@ -39,6 +39,19 @@ exports.viewTask = async (req, res) => {
             message: "Task fetched successfully!",
             tasks: user.tasks
         })
+    } catch (error) {
+        res.status(400).json({ message: error.message })
+    }
+}
+
+exports.viewTask = async (req, res) => {
+    try {
+        const { taskId } = req.params;
+        const task = await Task.findById({ _id: taskId });
+        if (!task) {
+            return res.status(400).json({ message: "Task not found!" })
+        }
+        res.status(200).json({ task })
     } catch (error) {
         res.status(400).json({ message: error.message })
     }

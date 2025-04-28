@@ -24,5 +24,4 @@ router.put("/user/:userId", authMiddleware, adminAuthMiddleware, updateUser)
 router.get("/users", authMiddleware, adminAuthMiddleware, getUsers)
 router.get("/tasks", authMiddleware, adminAuthMiddleware, getTasks)
 
-
 module.exports = router;

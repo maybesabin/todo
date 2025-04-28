@@ -1,5 +1,5 @@
 import Card from "../components/dashboardCard"
-import { Check, Users } from "lucide-react"
+import { Check, UserRoundCog, Users } from "lucide-react"
 import { useEffect, useState } from "react"
 import axios from "axios"
 import { ring } from 'ldrs'
@@ -7,7 +7,8 @@ import { ring } from 'ldrs'
 const cardContainer = () => {
     const [error, setError] = useState<null | string>(null);
     const [loading, setLoading] = useState(false);
-    const [users, setUsers] = useState<null | []>([])
+    const [users, setUsers] = useState<null | []>([]);
+    const [admins, setAdmins] = useState<null | []>([]);
     const [totalTasks, setTotalTasks] = useState(0);
 
     const fetchUsers = async () => {
@@ -21,6 +22,7 @@ const cardContainer = () => {
                 }
             })
             setUsers(response.data.users)
+            setAdmins(response.data.admins)
         } catch (error: any) {
             console.log(error.message)
             setError(error.message)
@@ -45,7 +47,8 @@ const cardContainer = () => {
 
     const cards = [
         { title: "Total Tasks", icon: Check, growth: 10, number: totalTasks },
-        { title: "Active Users", icon: Users, growth: 10, number: users?.length }
+        { title: "Active Users", icon: Users, growth: 10, number: users?.length },
+        { title: "Admins", icon: UserRoundCog, growth: 10, number: admins?.length }
     ]
     return (
         <div className="w-full grid xl:grid-cols-4 lg:grid-cols-3 gap-4">
