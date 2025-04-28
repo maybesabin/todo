@@ -44,19 +44,6 @@ exports.viewTasks = async (req, res) => {
     }
 }
 
-exports.viewTask = async (req, res) => {
-    try {
-        const { taskId } = req.params;
-        const task = await Task.findById({ _id: taskId });
-        if (!task) {
-            return res.status(400).json({ message: "Task not found!" })
-        }
-        res.status(200).json({ task })
-    } catch (error) {
-        res.status(400).json({ message: error.message })
-    }
-}
-
 exports.updateTask = async (req, res) => {
     try {
         const { taskId } = req.params;
