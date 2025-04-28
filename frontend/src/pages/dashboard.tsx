@@ -4,14 +4,17 @@ import Sidebar from "../components/sidebar"
 import { LogOut } from "lucide-react";
 import Settings from "../container/settings";
 import Users from "../container/users"
+import { useNavigate } from "react-router-dom";
 
 const dashboard = () => {
 
-    const [active, setActive] = useState("users");
+    const [active, setActive] = useState("dashboard");
+    const navigate = useNavigate();
     const handleLogout = () => {
         localStorage.removeItem("token");
         setTimeout(() => {
             window.location.reload();
+            navigate("/");
         }, 500)
     }
 
