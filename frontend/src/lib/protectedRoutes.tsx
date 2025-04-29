@@ -13,6 +13,11 @@ const ProtectedRoute = ({ allowedRoles }: { allowedRoles: string[] }) => {
         const fetchUserData = async () => {
             try {
                 const token = localStorage.getItem("token");
+                if (!token) {
+                    setRole(null);
+                    return;
+                }
+
                 const response = await axios.get(`${import.meta.env.VITE_BACKEND_URI}/api/user/profile`, {
                     headers: {
                         Authorization: `Bearer ${token}`,
@@ -46,17 +51,17 @@ const ProtectedRoute = ({ allowedRoles }: { allowedRoles: string[] }) => {
         </div>;
     }
 
-    if (role && !allowedRoles.includes(role)) {
-        // Redirect admin to dashboard and regular users to home
+    // If not authenticated, redirect to login
+    if (role === null) {
+        return <Navigate to="/login" replace state={{ from: location }} />;
+    }
+
+    if (!allowedRoles.includes(role)) {
         const redirectPath = role === "admin" ? "/dashboard" : "/";
         return <Navigate to={redirectPath} replace />;
     }
 
-    // If not authenticated, redirect to login
-    if (!role) {
-        return <Navigate to="/login" replace state={{ from: location }} />;
-    }
-
+    // If authenticated and has the correct role, render the child routes
     return <Outlet />;
 };
 

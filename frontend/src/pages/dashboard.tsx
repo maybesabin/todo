@@ -1,6 +1,6 @@
 import Dashboard from "@/container/dashboard"
 import { useState } from "react"
-import Sidebar from "../components/sidebar"
+import Sidebar from "../components/adminSidebar"
 import { LogOut } from "lucide-react";
 import Settings from "../container/settings";
 import Users from "../container/users"

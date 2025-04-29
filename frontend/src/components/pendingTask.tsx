@@ -91,7 +91,7 @@ const pendingTask = () => {
                                     </h3>
                                 </div>
 
-                                <div className="flex items-center gap-4 md:-mr-4 mr-1">
+                                <div className="flex items-center gap-4 md:-mr-4 -mr-3">
                                     {
                                         item.isCompleted == false ?
                                             <div className="cursor-pointer">
@@ -124,7 +124,7 @@ const pendingTask = () => {
                 )
             }
 
-            {(error && isAuthenticated) && <div className="text-xs text-red-500 -mt-2">{error}</div>}
+            {(error && isAuthenticated && !loading) && <div className="text-xs text-red-500 -mt-2">{error}</div>}
 
             {(filteredTasks.length == 0 && loading == false && error == null) &&
                 <p className="text-neutral-400 text-xs -mt-2">No pending tasks</p>
@@ -134,7 +134,7 @@ const pendingTask = () => {
             <EditTask showEditTask={showEditTask} setShowEditTask={setShowEditTask} _id={selectedTaskId} />
 
             {showEditTask &&
-                <div className="z-40 w-full h-screen fixed inset-0 opacity-50 bg-black backdrop-blur-2xl" />
+                <div className="z-40 w-full fixed inset-0 opacity-50 bg-black backdrop-blur-2xl" />
             }
         </>
     )

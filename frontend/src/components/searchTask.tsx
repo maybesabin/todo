@@ -1,13 +1,17 @@
 import axios from "axios";
 import { Search, X } from "lucide-react";
-import { useState } from "react";
+import { SetStateAction, useState } from "react";
 import { ring } from "ldrs";
 
-const searchTask = () => {
+interface PropsType {
+    showSearchPopup: boolean;
+    setShowSearchPopup: React.Dispatch<SetStateAction<boolean>>;
+}
+
+const searchTask = ({ showSearchPopup, setShowSearchPopup }: PropsType) => {
     ring.register();
     const [searchText, setSearchText] = useState("");
     const [filteredTasks, setFilteredTasks] = useState<any | []>([]);
-    const [showSearchPopup, setShowSearchPopup] = useState(false);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [searchSubmitted, setSearchSubmitted] = useState(false);
@@ -48,13 +52,12 @@ const searchTask = () => {
     return (
         <>
             <Search
-                className="cursor-pointer text-neutral-400 hover:text-black transition-all"
+                className="md:block hidden cursor-pointer text-neutral-400 hover:text-black transition-all"
                 onClick={handleClosePopup}
                 size={"20px"}
             />
-
             <div
-                className={`z-50 fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white md:p-6 p-4 rounded-lg flex flex-col items-start gap-6 md:w-[30rem] w-[90%] 
+                className={`z-[1000] fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white md:p-6 p-4 rounded-lg flex flex-col items-start gap-6 md:w-[30rem] w-[90%] 
                 ${showSearchPopup
                         ? "visible opacity-100 scale-100"
                         : "invisible opacity-0 scale-75"
@@ -124,7 +127,7 @@ const searchTask = () => {
 
             {/* Popup Overlay */}
             {showSearchPopup && (
-                <div className="z-40 w-full h-screen fixed inset-0 opacity-50 bg-black backdrop-blur-2xl" />
+                <div className="z-40 w-full fixed inset-0 opacity-50 bg-black backdrop-blur-2xl" />
             )}
         </>
     );
