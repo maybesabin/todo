@@ -1,8 +1,10 @@
+import { useGlobalContext } from "@/context/globalContext";
 import axios from "axios";
 import { useEffect, useState } from "react"
 
 const userProfile = () => {
 
+    const { isAuthenticated } = useGlobalContext()
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<null | string>(null);
     const [userData, setUserData] = useState<any | []>([]);
@@ -28,8 +30,8 @@ const userProfile = () => {
     }
 
     useEffect(() => {
-        fetchUserDetails()
-    }, [])
+        if (isAuthenticated == true) fetchUserDetails();
+    }, [isAuthenticated])
 
     return (
         <div className={`absolute -left-12 top-4 bg-white min-w-64`}>

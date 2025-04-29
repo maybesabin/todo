@@ -37,7 +37,7 @@ const addTask = ({
         setIsGenerating(true);
 
         try {
-            const descriptionPrompt = `For a todo task titled "${title}", generate a brief and specific task description. Keep it under 1-2 sentences and make it actionable.`
+            const descriptionPrompt = `For a todo task titled "${title}", generate a brief and specific task description. Keep it under 1 sentence (under 15 words) and make it actionable.`
             const categoryPrompt = `
              Recommend the most appropriate category for task titled "${title}" from ONLY these options: "chores" (for household tasks), "work" (for professional tasks), "personal" (for personal learning/growth), "finances" (for money related), "social" (for family time/mental health), "goals" (for certain tasks to be done), or "miscellaneous" (for others). Write response in one word and small caps.
             `

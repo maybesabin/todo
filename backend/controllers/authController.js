@@ -30,7 +30,7 @@ exports.login = async (req, res) => {
     try {
         const { email, password } = req.body;
 
-        const user = await User.findOne({ email });
+        const user = await User.findOne({ email, role: 'user' });
         if (!user) {
             return res.status(400).json({ message: "User doesn't exist with this email." })
         }
