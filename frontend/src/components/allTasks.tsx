@@ -68,7 +68,7 @@ const allTasks = () => {
                         return (
                             <div
                                 key={idx}
-                                className="border md:p-4 p-3 rounded-md w-full flex items-center justify-between"
+                                className="border md:p-4 p-2 rounded-md w-full flex items-center justify-between"
                             >
                                 <div className="flex items-center gap-4">
                                     <Checkbox
@@ -87,7 +87,7 @@ const allTasks = () => {
                                     </h3>
                                 </div>
 
-                                <div className="flex items-center gap-4">
+                                <div className="flex items-center gap-4 md:-mr-4 mr-1">
                                     {
                                         item.isCompleted == false ?
                                             <div className="cursor-pointer">

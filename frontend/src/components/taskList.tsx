@@ -55,9 +55,9 @@ const taskList = () => {
                         (active === "Completed" && tasks.filter((item: any) => item.isCompleted === true).length === 0)
                     }
                     onClick={deleteMany}
-                    className={`cursor-pointer flex items-center gap-2 border rounded-md px-2 py-1 text-rose-600 hover:text-rose-700`}
+                    className={`cursor-pointer flex items-center md:font-medium font-normal gap-2 border rounded-md px-2 py-1 text-rose-600 hover:text-rose-700`}
                 >
-                    <Trash size={14} />
+                    <Trash className="md:size-[14px] size-[12px]" />
                     <span>Delete All</span>
                 </button>
             </div>
