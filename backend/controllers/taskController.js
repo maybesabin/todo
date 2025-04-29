@@ -97,11 +97,43 @@ exports.searchTask = async (req, res) => {
     const userId = req.user._id;
 
     try {
+        if (typeof query !== 'string' || !query.trim()) {
+            return res.status(400).json({ message: "Invalid or missing query parameter" });
+        }
+
         const todos = await Task.find({
             user: userId,
             title: { $regex: query, $options: 'i' }
-        })
+        });
+
         res.json(todos);
+    } catch (error) {
+        res.status(400).json({ message: error.message });
+    }
+}
+
+exports.completeTask = async (req, res) => {
+    try {
+        const { taskId } = req.params;
+        const userId = req.user._id;
+
+        const task = await Task.findById({ _id: taskId });
+
+        if (!task) {
+            return res.status(400).json({ message: "Task not found!" })
+        }
+
+        if (task.user?.toString() !== userId.toString()) {
+            return res.status(400).json({ message: "Unauthorized user" })
+        }
+
+        task.isCompleted = true;
+        await task.save();
+
+        res.status(200).json({
+            message: "Task updated successfully!",
+            task
+        })
     } catch (error) {
         res.status(400).json({ message: error.message })
     }

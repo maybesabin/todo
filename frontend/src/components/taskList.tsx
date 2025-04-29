@@ -4,10 +4,12 @@ import { useState } from "react";
 import EditTask from "../components/editTask"
 import { toast } from "react-hot-toast"
 import { ring } from "ldrs";
+import { Checkbox } from "./ui/checkbox";
+import axios from "axios";
 
 const taskList = () => {
     ring.register();
-    const { tasks, isAuthenticated, loading, error } = useGlobalContext();
+    const { tasks, isAuthenticated, loading, error, fetchTasks, token } = useGlobalContext();
     const [showEditTask, setShowEditTask] = useState<boolean | false>(false);
     const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
 
@@ -25,6 +27,26 @@ const taskList = () => {
         { title: 'Goals', icon: <Trophy size={'33px'} className="p-2" /> },
         { title: 'Miscellaneous', icon: <Package size={'33px'} className="p-2" /> },
     ];
+
+    const updateTask = async (taskId: string) => {
+        const loadingToast = toast.loading("Updating task")
+        try {
+            await axios.put(`${import.meta.env.VITE_BACKEND_URI}/api/task/complete/${taskId}`, {},
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        'Content-Type': "application/json"
+                    }
+                })
+            toast.success("Updated task!")
+            fetchTasks();
+        } catch (error: any) {
+            console.log(error.message)
+            toast.error(error.message)
+        } finally {
+            toast.dismiss(loadingToast)
+        }
+    }
 
     return (
         <div className="flex flex-col items-start md:gap-6 gap-4 w-full mt-4">
@@ -50,10 +72,18 @@ const taskList = () => {
                         return (
                             <div key={idx} className="border md:p-4 p-3 rounded-md w-full flex items-center justify-between">
                                 <div className="flex items-center gap-4">
+                                    <Checkbox
+                                        onClick={() => updateTask(item._id)}
+                                        checked={item.isCompleted}
+                                    />
                                     <div className="bg-neutral-100 rounded-full h-9 w-9 flex items-center justify-center">
                                         {matchingCategory?.icon}
                                     </div>
-                                    <h3 className="md:text-sm text-xs font-medium first-letter:uppercase">{item.title}</h3>
+                                    <h3
+                                        className={`${item.isCompleted && "line-through text-neutral-600"} md:text-sm text-xs font-medium first-letter:uppercase`}
+                                    >
+                                        {item.title}
+                                    </h3>
                                 </div>
 
                                 <div className="flex items-center gap-4">

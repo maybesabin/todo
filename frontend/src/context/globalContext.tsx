@@ -18,6 +18,7 @@ interface GlobalContextPropsType {
     loading: boolean;
     error: string | null;
     setToken: React.Dispatch<SetStateAction<string | null>>;
+    token: string | null;
 }
 
 // create context
@@ -87,7 +88,8 @@ export const GlobalProvider = ({ children }: { children: ReactNode }) => {
             categories,
             loading,
             error,
-            setToken
+            setToken,
+            token
         }}>
             {children}
         </GlobalContext.Provider>
