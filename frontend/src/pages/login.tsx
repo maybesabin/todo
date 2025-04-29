@@ -5,6 +5,7 @@ import { useState } from "react"
 import toast from "react-hot-toast"
 import { Link, useNavigate } from "react-router-dom"
 import { Checkbox } from "@/components/ui/checkbox"
+import { useGlobalContext } from "@/context/globalContext"
 
 const login = () => {
 
@@ -12,6 +13,8 @@ const login = () => {
         email: string,
         password: string,
     }
+
+    const { setToken, setIsAuthenticated } = useGlobalContext()
 
     const [formData, setFormData] = useState<User>({
         email: '',
@@ -38,13 +41,12 @@ const login = () => {
             const response = await axios.post(url, formData);
             if (response.status === 200) {
                 localStorage.setItem("token", response.data.token);
+                setToken(response.data.token);
+                setIsAuthenticated(true)
                 toast.success("Logged in successfully!");
 
                 if (response.data.role === 'user') {
                     navigate('/');
-                    setTimeout(() => {
-                        window.location.reload();
-                    }, 1000);
                 } else {
                     navigate('/dashboard');
                 }

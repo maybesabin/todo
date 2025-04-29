@@ -17,6 +17,7 @@ interface GlobalContextPropsType {
     categories: any;
     loading: boolean;
     error: string | null;
+    setToken: React.Dispatch<SetStateAction<string | null>>;
 }
 
 // create context
@@ -25,20 +26,20 @@ const GlobalContext = createContext<GlobalContextPropsType | undefined>(undefine
 // create provider
 export const GlobalProvider = ({ children }: { children: ReactNode }) => {
 
+    const [token, setToken] = useState<null | string>(localStorage.getItem("token"));
     const [isAuthenticated, setIsAuthenticated] = useState<boolean | false>(false);
     const [tasks, setTasks] = useState<Task[]>([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<null | string>(null);
 
-    const token = localStorage.getItem("token");
-
     const fetchTasks = async () => {
+        if (!token) return;
         setLoading(true)
         try {
             const response = await axios.get(`${import.meta.env.VITE_BACKEND_URI}/api/task`, {
                 headers: {
                     Authorization: `Bearer ${token}`,
-                    'Content-Typ': "application/json"
+                    'Content-Type': "application/json"
                 }
             })
             setLoading(false)
@@ -68,6 +69,7 @@ export const GlobalProvider = ({ children }: { children: ReactNode }) => {
     useEffect(() => {
         if (token) {
             setIsAuthenticated(true)
+            fetchTasks();
         }
         else {
             setIsAuthenticated(false);
@@ -84,7 +86,8 @@ export const GlobalProvider = ({ children }: { children: ReactNode }) => {
             setIsAuthenticated,
             categories,
             loading,
-            error
+            error,
+            setToken
         }}>
             {children}
         </GlobalContext.Provider>

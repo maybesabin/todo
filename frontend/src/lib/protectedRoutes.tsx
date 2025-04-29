@@ -31,7 +31,7 @@ const ProtectedRoute = ({ allowedRoles }: { allowedRoles: string[] }) => {
     }, []);
 
     if (loading) {
-        return <div className="h-screen w-full flex items-center justify-center">
+        return <div className="h-screen w-full flex items-center gap-4 justify-center">
             {/* @ts-ignore */}
             <l-ring
                 size="20"
@@ -42,6 +42,7 @@ const ProtectedRoute = ({ allowedRoles }: { allowedRoles: string[] }) => {
             >
                 {/* @ts-ignore */}
             </l-ring>
+            <span className="text-base text-neutral-600">Loading, please wait</span>
         </div>;
     }
 
