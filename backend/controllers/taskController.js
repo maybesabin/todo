@@ -117,7 +117,7 @@ exports.completeTask = async (req, res) => {
         const { taskId } = req.params;
         const userId = req.user._id;
 
-        const task = await Task.findById({ _id: taskId });
+        const task = await Task.findById(taskId);
 
         if (!task) {
             return res.status(400).json({ message: "Task not found!" })
@@ -127,7 +127,7 @@ exports.completeTask = async (req, res) => {
             return res.status(400).json({ message: "Unauthorized user" })
         }
 
-        task.isCompleted = true;
+        task.isCompleted = !task.isCompleted;
         await task.save();
 
         res.status(200).json({
@@ -138,3 +138,31 @@ exports.completeTask = async (req, res) => {
         res.status(400).json({ message: error.message })
     }
 }
+
+exports.deleteCompleted = async (req, res) => {
+    try {
+        await Task.deleteMany({ isCompleted: true });
+        res.status(200).json({ message: "Successfully deleted completed tasks!" })
+    } catch (error) {
+        res.status(400).json({ message: error.message })
+    }
+}
+
+exports.deleteAll = async (req, res) => {
+    try {
+        await Task.deleteMany();
+        res.status(200).json({ message: "Successfully deleted all tasks!" })
+    } catch (error) {
+        res.status(400).json({ message: error.message })
+    }
+}
+
+exports.deleteActive = async (req, res) => {
+    try {
+        await Task.deleteMany({ isCompleted: false });
+        res.status(200).json({ message: "Successfully deleted active tasks!" })
+    } catch (error) {
+        res.status(400).json({ message: error.message })
+    }
+}
+

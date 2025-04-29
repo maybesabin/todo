@@ -1,5 +1,5 @@
 import axios from "axios"
-import { CirclePlus, X } from "lucide-react"
+import { Plus, X } from "lucide-react"
 import { toast } from "react-hot-toast";
 import { SetStateAction, useEffect, useRef, useState } from "react"
 import { Input } from "@/components/ui/input"
@@ -154,9 +154,7 @@ const addTask = ({
 
     return (
         <div className="w-full md:py-4 py-3 mt-6">
-
             <div className="w-full rounded-lg">
-                <h2 className="font-medium md:text-lg text-sm">Add New Task</h2>
                 <div
                     onClick={() => {
                         if (isAuthenticated) {
@@ -170,14 +168,14 @@ const addTask = ({
                     <input
                         readOnly
                         placeholder="What needs to be done?"
-                        className={`w-full outline-none border px-2 md:py-3 py-2.5 rounded-md md:text-sm text-xs ${isAuthenticated ? "cursor-pointer" : "cursor-not-allowed"}`}
+                        className={`border border-rose-200 text-rose-800 w-full outline-none px-4 md:py-4 py-2.5 rounded-md md:text-sm text-xs ${isAuthenticated ? "cursor-pointer" : "cursor-not-allowed"}`}
                         type="text"
                     />
                     <button
-                        className={`bg-black hover:bg-neutral-800 cursor-pointer transition-all md:p-3 px-3 py-2.5 flex items-center justify-center gap-3 text-white rounded-md md:text-sm text-xs whitespace-nowrap`}
+                        className={`bg-gradient-to-b from-rose-500 to-pink-500 hover:bg-rose-600 cursor-pointer transition-all md:py-4 py-3 px-5 flex items-center justify-center gap-3 text-white rounded-md md:text-sm text-xs whitespace-nowrap`}
                     >
-                        <CirclePlus size={'17px'} className={`${isAuthenticated ? "cursor-pointer" : "cursor-not-allowed"}`} />
-                        <h4 className={`${isAuthenticated ? "cursor-pointer" : "cursor-not-allowed"}`}>Add Task</h4>
+                        <Plus size={'17px'} className={`${isAuthenticated ? "cursor-pointer" : "cursor-not-allowed"}`} />
+                        <h4 className={`font-medium ${isAuthenticated ? "cursor-pointer" : "cursor-not-allowed"}`}>Add Task</h4>
                     </button>
                 </div>
             </div>

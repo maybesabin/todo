@@ -2,10 +2,9 @@ import { useGlobalContext } from "../context/globalContext"
 import AddTask from "../components/addTask"
 import { useEffect, useState } from "react";
 import TaskList from "../components/taskList"
-import emoji from "../assets/clipboard.png"
 import { Link } from "react-router-dom";
 import axios from "axios";
-import { LogIn, LogOut } from "lucide-react";
+import { LogIn, Sparkles } from "lucide-react";
 import SearchTask from "../components/searchTask"
 import UserProfile from "../components/userProfile"
 
@@ -39,10 +38,12 @@ const Homeapage = () => {
                 <div className="w-full">
                     <div className="flex flex-wrap gap-4 items-center justify-between w-full">
                         <div className="flex items-center gap-2">
-                            <img className="md:size-12 size-6" src={emoji} alt="Iphone task emoji" />
-                            <h1 className="flex items-center gap-4 md:text-5xl text-3xl font-semibold">
+                            <div className="bg-gradient-to-r from-rose-500 to-pink-500 p-2 rounded-md text-white">
+                                <Sparkles className="h-5 w-5" />
+                            </div>
+                            <h1 className="flex items-center gap-4 md:text-4xl text-3xl font-semibold">
                                 Tasks
-                                <span className="md:text-sm text-xs bg-neutral-200 rounded-full py-1 px-2.5">
+                                <span className="text-xs bg-neutral-100 rounded-full py-1 px-2.5">
                                     {tasks.length}
                                 </span>
                             </h1>
@@ -53,24 +54,21 @@ const Homeapage = () => {
                                 <div className="flex items-center gap-4">
                                     <SearchTask />
                                     <div className="relative group">
-                                        <h3 className="bg-[#fef3c7] cursor-default h-8 w-8 rounded-full flex items-center justify-center text-red-800 md:text-base text-sm">
+                                        <h3 className="bg-rose-100 cursor-default h-8 w-8 rounded-full flex items-center justify-center text-rose-500 md:text-base text-sm">
                                             {username?.charAt(0).toUpperCase()}
                                         </h3>
                                         <div className="group-hover:visible group-hover:opacity-100 group-hover:scale-100 scale-0 opacity-0 transition-all duration-300 invisible">
                                             <UserProfile />
                                         </div>
                                     </div>
-                                    <div className="flex items-center gap-2 cursor-pointer group">
-                                        <LogOut size={'17px'} className="text-neutral-500 group-hover:text-black" />
-                                        <p
-                                            onClick={() => {
-                                                localStorage.removeItem("token");
-                                                window.location.reload();
-                                            }}
-                                            className="md:text-sm text-xs text-neutral-500 group-hover:text-black">
-                                            Logout
-                                        </p>
-                                    </div>
+                                    <p
+                                        onClick={() => {
+                                            localStorage.removeItem("token");
+                                            window.location.reload();
+                                        }}
+                                        className="md:text-sm text-xs text-neutral-500 hover:text-black">
+                                        Logout
+                                    </p>
                                 </div>
                                 :
                                 <Link

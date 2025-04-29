@@ -1,133 +1,72 @@
-import { useGlobalContext } from "@/context/globalContext"
-import { BriefcaseBusiness, ListCheck, MessageSquare, Package, PencilLine, Trophy, UserRound, Wallet } from "lucide-react";
 import { useState } from "react";
-import EditTask from "../components/editTask"
+import AllTasks from "./allTasks"
+import CompletedTask from "./completedTask";
+import PendingTask from "./pendingTask";
+import { Trash } from "lucide-react";
 import { toast } from "react-hot-toast"
-import { ring } from "ldrs";
-import { Checkbox } from "./ui/checkbox";
 import axios from "axios";
+import { useGlobalContext } from "@/context/globalContext";
 
 const taskList = () => {
-    ring.register();
-    const { tasks, isAuthenticated, loading, error, fetchTasks, token } = useGlobalContext();
-    const [showEditTask, setShowEditTask] = useState<boolean | false>(false);
-    const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
+    const [active, setActive] = useState("All");
+    const taskTypes = ["All", "Pending", "Completed"]
+    const { fetchTasks, tasks } = useGlobalContext();
 
-    const handleEditClick = (taskId: string) => {
-        setSelectedTaskId(taskId);
-        setShowEditTask(true)
-    }
-
-    const categories = [
-        { title: 'Chores', icon: <ListCheck size={'33px'} className="p-2" /> },
-        { title: 'Work', icon: <BriefcaseBusiness size={'33px'} className="p-2" /> },
-        { title: 'Personal', icon: <UserRound size={'33px'} className="p-2" /> },
-        { title: 'Finances', icon: <Wallet size={'33px'} className="p-2" /> },
-        { title: 'Social', icon: <MessageSquare size={'33px'} className="p-2" /> },
-        { title: 'Goals', icon: <Trophy size={'33px'} className="p-2" /> },
-        { title: 'Miscellaneous', icon: <Package size={'33px'} className="p-2" /> },
-    ];
-
-    const updateTask = async (taskId: string) => {
-        const loadingToast = toast.loading("Updating task")
+    const deleteMany = async () => {
+        const token = localStorage.getItem("token")
+        const endpoint = active == "All" ? "delete-all" : active == "Pending" ? "delete-active" : "delete-completed"
         try {
-            await axios.put(`${import.meta.env.VITE_BACKEND_URI}/api/task/complete/${taskId}`, {},
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                        'Content-Type': "application/json"
-                    }
-                })
-            toast.success("Updated task!")
+            await axios.delete(`${import.meta.env.VITE_BACKEND_URI}/api/task/${endpoint}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    "Content-Type": "application/json"
+                }
+            })
+            toast.success(`Deleted ${active.toLowerCase()} tasks!`)
             fetchTasks();
         } catch (error: any) {
             console.log(error.message)
             toast.error(error.message)
-        } finally {
-            toast.dismiss(loadingToast)
         }
     }
 
     return (
         <div className="flex flex-col items-start md:gap-6 gap-4 w-full mt-4">
+
+            {/* Categories */}
+            <div className="bg-neutral-100 p-1 rounded-sm flex items-center justify-between gap-2 w-full">
+                {taskTypes.map((_) => (
+                    <div
+                        onClick={() => setActive(_)}
+                        key={_}
+                        className={`${active == _ && "bg-white"} transition-all cursor-pointer md:font-medium md:text-sm text-xs w-1/3 md:py-2.5 py-2 text-center rounded-sm`}
+                    >
+                        {_}
+                    </div>
+                ))}
+            </div>
+
+            <div className="w-full flex items-center justify-between md:text-sm text-xs font-medium">
+                <p className="text-neutral-600">{active} Tasks</p>
+                <button
+                    disabled={
+                        (active === "All" && tasks.length === 0) ||
+                        (active === "Pending" && tasks.filter((item: any) => item.isCompleted === false).length === 0) ||
+                        (active === "Completed" && tasks.filter((item: any) => item.isCompleted === true).length === 0)
+                    }
+                    onClick={deleteMany}
+                    className={`cursor-pointer flex items-center gap-2 border rounded-md px-2 py-1 text-rose-600 hover:text-rose-700`}
+                >
+                    <Trash size={14} />
+                    <span>Delete All</span>
+                </button>
+            </div>
+
             {
-                loading ? (
-                    <>
-                        {/* @ts-ignore */}
-                        <l-ring
-                            size="20"
-                            stroke="2"
-                            bg-opacity="0"
-                            speed="2"
-                            color="gray"
-                        />
-                    </>
-                ) : (
-                    tasks.map((item: any, idx: number) => {
-                        // Find matching category
-                        const matchingCategory = categories.find(
-                            (category) => category.title.toLowerCase() === item.category?.toLowerCase()
-                        );
-
-                        return (
-                            <div key={idx} className="border md:p-4 p-3 rounded-md w-full flex items-center justify-between">
-                                <div className="flex items-center gap-4">
-                                    <Checkbox
-                                        onClick={() => updateTask(item._id)}
-                                        checked={item.isCompleted}
-                                    />
-                                    <div className="bg-neutral-100 rounded-full h-9 w-9 flex items-center justify-center">
-                                        {matchingCategory?.icon}
-                                    </div>
-                                    <h3
-                                        className={`${item.isCompleted && "line-through text-neutral-600"} md:text-sm text-xs font-medium first-letter:uppercase`}
-                                    >
-                                        {item.title}
-                                    </h3>
-                                </div>
-
-                                <div className="flex items-center gap-4">
-                                    <div className="relative group cursor-pointer">
-                                        <h4 className="md:flex hidden absolute transition-opacity duration-200 opacity-0 group-hover:opacity-100 invisible group-hover:visible w-max -top-8 -left-5 text-xs text-white px-2 py-1.5 rounded-md bg-black">
-                                            Edit Task
-                                        </h4>
-                                        <PencilLine
-                                            onClick={() => {
-                                                if (isAuthenticated) {
-                                                    handleEditClick(item._id);
-                                                } else {
-                                                    toast.error("You need to login first.");
-                                                }
-                                            }}
-                                            size={'25px'}
-                                            className="hover:bg-neutral-200 p-1 rounded-md"
-                                        />
-                                    </div>
-                                    <div className="relative group cursor-pointer">
-                                        <h4 className="md:flex hidden absolute transition-opacity duration-200 opacity-0 group-hover:opacity-100 invisible group-hover:visible w-max -top-8 -left-5 text-xs text-white px-2 py-1.5 rounded-md bg-black">
-                                            Delete Task
-                                        </h4>
-                                    </div>
-                                </div>
-                            </div>
-                        );
-                    })
-                )
+                active == "All" ? <AllTasks /> :
+                    active == "Pending" ? <PendingTask />
+                        : <CompletedTask />
             }
-
-            {(error && isAuthenticated) && <div className="text-xs text-red-500 -mt-2">{error}</div>}
-
-            {(tasks.length == 0 && loading == false && error == null) &&
-                <p className="text-neutral-400 text-xs -mt-2">No tasks available</p>
-            }
-
-            {/* Edit Task */}
-            <EditTask showEditTask={showEditTask} setShowEditTask={setShowEditTask} _id={selectedTaskId} />
-
-            {showEditTask &&
-                <div className="z-40 w-full h-screen fixed inset-0 opacity-50 bg-black backdrop-blur-2xl" />
-            }
-
         </div >
     )
 }

@@ -34,11 +34,11 @@ const userProfile = () => {
     }, [isAuthenticated])
 
     return (
-        <div className={`absolute -left-12 top-4 bg-white min-w-64`}>
+        <div className={`absolute -left-12 top-4 bg-white z-999 pb-2 px-2 min-w-64`}>
             {!loading ?
                 !error &&
                 <div className="flex items-center gap-3">
-                    <h3 className="bg-[#fef3c7] h-8 w-8 rounded-full flex items-center justify-center text-red-800 md:text-base text-sm">
+                    <h3 className="bg-rose-100 h-8 w-8 rounded-full flex items-center justify-center text-rose-500 md:text-base text-sm">
                         {userData.username?.charAt(0).toUpperCase()}
                     </h3>
                     <div className="flex flex-col items-start">
