@@ -1,8 +1,7 @@
 import axios from "axios"
-import { Plus, X } from "lucide-react"
+import { Plus, Zap } from "lucide-react"
 import { toast } from "react-hot-toast";
-import { SetStateAction, useEffect, useRef, useState } from "react"
-import { Input } from "@/components/ui/input"
+import { useState } from "react"
 import {
     Select,
     SelectContent,
@@ -13,59 +12,42 @@ import {
 import { useGlobalContext } from "@/context/globalContext";
 import { GoogleGenAI } from "@google/genai";
 
-const addTask = ({
-    showAddTask,
-    setShowAddTask
-}: {
-    showAddTask: boolean,
-    setShowAddTask: React.Dispatch<SetStateAction<boolean>>
-}) => {
+const addTask = () => {
     interface TaskType {
         title: string;
-        description: string;
         category: string;
     }
 
     const ai = new GoogleGenAI({ apiKey: import.meta.env.VITE_GEMINI_API_KEY });
-    const debounceTimeout = useRef<NodeJS.Timeout | null>(null);
     const [isGenerating, setIsGenerating] = useState(false);
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState<string | null>(null);
+    const [open, setOpen] = useState(false)
 
     const generateContent = async (title: string) => {
         if (!title.trim()) return;
         setIsGenerating(true);
 
         try {
-            const descriptionPrompt = `For a todo task titled "${title}", generate a brief and specific task description. Keep it under 1 sentence (under 15 words) and make it actionable.`
             const categoryPrompt = `
              Recommend the most appropriate category for task titled "${title}" from ONLY these options: "chores" (for household tasks), "work" (for professional tasks), "personal" (for personal learning/growth), "finances" (for money related), "social" (for family time/mental health), "goals" (for certain tasks to be done), or "miscellaneous" (for others). Write response in one word and small caps.
             `
 
-            //make both calls at once
-            const [descriptionResponse, categoryResponse] = await Promise.all([
-                ai.models.generateContent({
-                    model: "gemini-2.0-flash",
-                    contents: [{ role: "user", parts: [{ text: descriptionPrompt }] }]
-                }),
-                ai.models.generateContent({
-                    model: "gemini-2.0-flash",
-                    contents: [{ role: "user", parts: [{ text: categoryPrompt }] }]
-                })
-            ]);
+            const categoryResponse = await ai.models.generateContent({
+                model: "gemini-2.0-flash",
+                contents: [{ role: "user", parts: [{ text: categoryPrompt }] }]
+            })
 
-
-            const generatedDescription = descriptionResponse?.text?.trim() || "";
             const generatedCategory = categoryResponse?.text?.trim() || "";
 
             setFormData(prevData => ({
                 ...prevData,
-                description: generatedDescription,
                 category: generatedCategory
             }));
+            setIsGenerating(false);
         } catch (error: any) {
             console.log(error.message)
             toast.error("Failed to generate description");
+        } finally {
+            setIsGenerating(false)
         }
     }
 
@@ -75,28 +57,8 @@ const addTask = ({
 
     const [formData, setFormData] = useState<TaskType>({
         title: "",
-        description: "",
         category: ""
     })
-
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        const { name, value } = e.target;
-        setFormData((prevData) => ({
-            ...prevData,
-            [name]: value
-        }))
-
-        if (name === 'title') {
-            if (debounceTimeout.current) {
-                clearTimeout(debounceTimeout.current);
-            }
-            debounceTimeout.current = setTimeout(() => {
-                if (value.trim()) {
-                    generateContent(value);
-                }
-            }, 500) //wait 500ms after user stop typing
-        }
-    }
 
     // Handles select dropdown changes separately
     const handleSelectChange = (value: string) => {
@@ -109,11 +71,11 @@ const addTask = ({
     const addTask = async (e: React.FormEvent) => {
         e.preventDefault();
 
-        if (!formData.title || !formData.description || !formData.category) {
+        if (!formData.title || !formData.category) {
             toast.error("Please fill out all required fields.");
             return;
         }
-        setLoading(true);
+        const loadingToast = toast.loading("Adding Task")
         try {
             const response = await axios.post(`${import.meta.env.VITE_BACKEND_URI}/api/task`,
                 formData,
@@ -125,121 +87,90 @@ const addTask = ({
                 })
             if (response.status == 200) {
                 toast.success("Task added successfully!")
-                setShowAddTask(!showAddTask)
-                setLoading(false)
+                toast.dismiss(loadingToast)
                 fetchTasks();
                 setFormData({
                     title: "",
-                    description: "",
                     category: ""
                 })
             }
         } catch (error: any) {
             console.log(error.message)
-            setError("Failed to add task.")
+            toast.error("Failed to add task.")
         } finally {
-            setLoading(false);
+            toast.dismiss(loadingToast)
         }
     }
 
-    useEffect(() => {
-        if (showAddTask == false) {
-            setFormData({
-                title: '',
-                description: '',
-                category: ''
-            })
-        }
-    }, [showAddTask])
-
     return (
-        <div className="w-full md:py-4 py-3 mt-6">
-            <div className="w-full rounded-lg">
-                <div
-                    onClick={() => {
-                        if (isAuthenticated) {
-                            setShowAddTask(!showAddTask)
-                        } else {
-                            toast.error("You need to login first.")
-                        }
-                    }}
-                    className={`w-full flex items-center gap-2 mt-2 ${isAuthenticated ? "cursor-pointer" : "cursor-not-allowed"}`}
-                >
-                    <input
-                        readOnly
-                        placeholder="What needs to be done?"
-                        className={`border border-rose-200 text-rose-800 w-full outline-none px-4 md:py-4 py-2.5 rounded-md md:text-sm text-xs ${isAuthenticated ? "cursor-pointer" : "cursor-not-allowed"}`}
-                        type="text"
-                    />
-                    <button
-                        className={`bg-gradient-to-b from-rose-500 to-pink-500 hover:bg-rose-600 cursor-pointer transition-all md:py-4 py-3 px-5 flex items-center justify-center gap-3 text-white rounded-md md:text-sm text-xs whitespace-nowrap`}
-                    >
-                        <Plus size={'17px'} className={`${isAuthenticated ? "cursor-pointer" : "cursor-not-allowed"}`} />
-                        <h4 className={`font-medium ${isAuthenticated ? "cursor-pointer" : "cursor-not-allowed"}`}>Add Task</h4>
-                    </button>
-                </div>
-            </div>
+        <form
+            onSubmit={addTask}
+            className="w-full md:py-4 py-3 mt-6"
+        >
 
-            {/* Popup */}
-            <form
-                onSubmit={addTask}
-                className={`z-50 fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white md:p-6 p-4 rounded-lg flex flex-col items-start gap-6 md:w-[30rem] w-[90%] 
-                ${showAddTask ? "visible opacity-100 scale-100" : "invisible opacity-0 scale-75"} transition-all duration-200`}>
-                <div className="flex items-center justify-between w-full">
-                    <h3 className="md:text-lg text-sm font-medium">Add New Task</h3>
-                    <X size={'20px'} onClick={() => setShowAddTask(!showAddTask)} />
-                </div>
+            <input
+                value={formData.title}
+                onChange={(e) => {
+                    setFormData((prevData) => ({
+                        ...prevData,
+                        title: e.target.value,
+                    }));
+                }}
+                maxLength={50}
+                placeholder="What needs to be done?"
+                className={`border border-rose-200 text-rose-800 w-full outline-none px-4 md:py-4 py-2.5 rounded-md md:text-sm text-xs ${!isAuthenticated && "cursor-not-allowed"}`}
+                type="text"
+            />
 
-                <div className="flex flex-col gap-1.5 w-full">
-                    <label className="md:text-sm text-xs" htmlFor="title">Task Title</label>
-                    <Input
-                        name="title"
-                        value={formData.title}
-                        onChange={handleChange}
-                        className="md:text-sm text-xs border-neutral-200"
-                        placeholder="Doing chores"
-                    />
-                </div>
-                <div className="flex flex-col gap-1.5 w-full">
-                    <label className="md:text-sm text-xs" htmlFor="description">
-                        Task Description
-                    </label>
-                    <textarea
-                        name="description"
-                        value={formData.description}
-                        onChange={handleChange}
-                        style={{ resize: 'none' }}
-                        className="outline-none h-48 border border-neutral-200 p-2 rounded-md md:text-sm text-xs"
-                        placeholder={isGenerating ? "Generating description..." : "Take out the trash at 9 am"}
-                    />
-                </div>
-                <div className="flex flex-col gap-1.5 w-full">
-                    <label className="md:text-sm text-xs" htmlFor="category">Task Category</label>
+            <div className="mt-4 w-full flex items-start justify-between">
+                <div className="flex flex-col gap-1.5">
                     <Select
+                        open={open}
+                        onOpenChange={setOpen}
                         onValueChange={handleSelectChange}
                         value={formData.category.trim()}
                     >
-                        <SelectTrigger className="border-neutral-200 w-full md:text-sm text-xs">
-                            <SelectValue placeholder="Select Category" />
+                        <SelectTrigger className="border-neutral-200 md:text-sm text-xs md:w-52">
+                            <SelectValue
+                                placeholder={
+                                    isGenerating
+                                        ? "Selecting Category..."
+                                        : "Select Category"
+                                }
+                            />
                         </SelectTrigger>
                         <SelectContent className="bg-white border-neutral-200">
                             {categories.map((item: any, idx: number) => (
-                                <SelectItem key={idx} value={item.title.toLowerCase()}>{item.icon}{item.title}</SelectItem>
+                                <SelectItem
+                                    key={idx}
+                                    value={item.title.toLowerCase()}
+                                    className="md:text-sm text-xs"
+                                >{item.icon}{item.title}
+                                </SelectItem>
                             ))}
+                            <div className="w-full bg-neutral-200 h-[1px] my-2"></div>
+                            <div
+                                onClick={() => {
+                                    setOpen(false)
+                                    generateContent(formData.title)
+                                }}
+                                className="cursor-pointer hover:bg-neutral-100 my-0.5 transition-all p-2 rounded-sm flex items-center gap-2 md:text-sm text-xs"
+                            >
+                                <Zap color="#ec003f" className="md:size-[17px] size-[14px]" />
+                                <span className="text-rose-600">Generate with AI</span>
+                            </div>
                         </SelectContent>
                     </Select>
                 </div>
-                {error && <div className="text-red-500 text-xs">{error}</div>}
                 <button
-                    className="md:text-sm text-xs bg-black text-white font-medium px-3 py-2 cursor-pointer hover:bg-neutral-800 rounded-sm"
-                    type="submit"
+                    onClick={addTask}
+                    className={`bg-gradient-to-b from-rose-500 to-pink-500 hover:bg-rose-600 cursor-pointer transition-all py-3 md:px-5 px-3 flex items-center justify-center gap-3 text-white rounded-md md:text-sm text-xs whitespace-nowrap`}
                 >
-                    {
-                        loading ? 'Adding Task...' : 'Add Task'
-                    }
+                    <Plus size={'17px'} className={`${isAuthenticated ? "cursor-pointer" : "cursor-not-allowed"}`} />
+                    <h4 className={`font-medium ${isAuthenticated ? "cursor-pointer" : "cursor-not-allowed"}`}>Add Task</h4>
                 </button>
-            </form>
-        </div>
+            </div>
+        </form >
     )
 }
 

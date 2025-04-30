@@ -70,7 +70,7 @@ const userSidebar = ({ showSidebar, setShowSidebar, showSearchPopup, setShowSear
     return (
         <div
             ref={sidebarRef}
-            className={`${showSidebar ? "visible -translate-x-0" : "invisible -translate-x-full"} md:hidden flex flex-col items-start justify-between transition-all duration-300 ease-in-out fixed z-999 bg-white h-[100dvh] left-0 w-80 -mt-6`}
+            className={`${showSidebar ? "visible -translate-x-0 blur-none" : "invisible -translate-x-full blur-sm"} md:hidden flex flex-col items-start justify-between transition-all duration-300 ease-in-out fixed z-999 bg-white h-[100dvh] left-0 w-80 -mt-6`}
         >
 
             <div className="flex flex-col items-start w-full">

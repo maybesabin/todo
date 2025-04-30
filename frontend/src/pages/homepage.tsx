@@ -11,7 +11,6 @@ import Sidebar from "@/components/userSidebar";
 const Homeapage = () => {
 
     const { tasks, isAuthenticated } = useGlobalContext();
-    const [showAddTask, setShowAddTask] = useState<boolean | false>(false);
     const [username, setUsername] = useState<string | null>(null);
     const [showSidebar, setShowSidebar] = useState(false);
     const [showSearchPopup, setShowSearchPopup] = useState(false);
@@ -92,14 +91,14 @@ const Homeapage = () => {
                         }
                     </div>
 
-                    <AddTask showAddTask={showAddTask} setShowAddTask={setShowAddTask} />
+                    <AddTask />
 
                     {/* Task List */}
                     <TaskList />
                 </div>
 
                 {/* Overlay */}
-                {(showAddTask || showSidebar) && <div className="z-40 w-full fixed inset-0 opacity-50 bg-black backdrop-blur-2xl" />}
+                {showSidebar && <div className="z-40 w-full fixed inset-0 opacity-50 bg-black backdrop-blur-2xl" />}
             </div>
         </div >
 

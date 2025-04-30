@@ -3,14 +3,19 @@ const User = require("../models/authModel");
 
 exports.addTask = async (req, res) => {
     try {
-        const { title, description, category } = req.body;
-        if (!title || !description || !category) {
+        const { title, category } = req.body;
+        if (!title || !category) {
             return res.status(400).json({ message: "Fields cannot be empty!" })
         }
 
         const userId = req.user._id;
 
-        const task = new Task({ title, description, category, user: userId })
+        const existingTask = await Task.findOne({ title, user: userId })
+        if (existingTask) {
+            return res.status(400).json({ message: "A similar task already exits." })
+        }
+
+        const task = new Task({ title, category, user: userId })
         const savedTask = await task.save();
 
         //add tasks to array
@@ -47,7 +52,7 @@ exports.viewTasks = async (req, res) => {
 exports.updateTask = async (req, res) => {
     try {
         const { taskId } = req.params;
-        const { title, description, category } = req.body;
+        const { title, category } = req.body;
         const userId = req.user._id;
 
         //find task
@@ -63,7 +68,7 @@ exports.updateTask = async (req, res) => {
 
         const updatedTask = await Task.findByIdAndUpdate(
             taskId,
-            { title, description, category },
+            { title, category },
             { new: true }
         )
 
