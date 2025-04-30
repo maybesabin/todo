@@ -1,5 +1,5 @@
 import axios from "axios"
-import { X } from "lucide-react"
+import { Check, Trash, X } from "lucide-react"
 import { toast } from "react-hot-toast";
 import { SetStateAction, useEffect, useState } from "react"
 import { Input } from "@/components/ui/input"
@@ -24,7 +24,6 @@ const editTask = ({
 
     interface TaskType {
         title: string | undefined;
-        description: string | undefined;
         category: string | undefined;
     }
 
@@ -37,7 +36,6 @@ const editTask = ({
     const [deleteLoading, setDeleteLoading] = useState(false);
     const [formData, setFormData] = useState<TaskType>({
         title: "",
-        description: "",
         category: ""
     })
 
@@ -46,7 +44,6 @@ const editTask = ({
     useEffect(() => {
         setFormData({
             title: currentTask?.title,
-            description: currentTask?.description,
             category: currentTask?.category
         })
     }, [currentTask])
@@ -134,17 +131,6 @@ const editTask = ({
                     />
                 </div>
                 <div className="flex flex-col gap-1.5 w-full">
-                    <label className="md:text-sm text-xs" htmlFor="description">Task Description</label>
-                    <textarea
-                        name="description"
-                        value={formData.description}
-                        onChange={handleChange}
-                        style={{ resize: 'none' }}
-                        className="outline-none h-48 border border-neutral-200 p-2 rounded-md md:text-sm text-xs"
-                        placeholder="Doing chores"
-                    />
-                </div>
-                <div className="flex flex-col gap-1.5 w-full">
                     <label className="md:text-sm text-xs" htmlFor="category">Task Category</label>
                     {formData.category &&
                         <Select
@@ -169,19 +155,22 @@ const editTask = ({
                     }
                 </div>
                 {error && <div className="text-xs text-red-500">{error}</div>}
-                <div className="flex items-center justify-end gap-2 w-full">
-                    <button
-                        onClick={() => deleteTask(_id)}
-                        className="md:text-sm text-xs bg-red-600 text-white font-medium px-3 py-2 cursor-pointer hover:bg-red-500 rounded-sm"
-                    >
-                        {deleteLoading ? 'Deleting...' : 'Delete'}
-                    </button>
+                <div className="flex items-center justify-start gap-2 w-full">
                     <button
                         onClick={editTask}
-                        className="md:text-sm text-xs bg-black text-white font-medium px-3 py-2 cursor-pointer hover:bg-neutral-800 rounded-sm"
+                        className="flex items-center justify-center gap-2 text-xs bg-black text-white font-medium px-3 py-2 cursor-pointer hover:bg-neutral-800 rounded-sm"
                     >
+                        <Check size={'15px'} />
                         {saveLoading ? 'Saving...' : 'Save'}
                     </button>
+                    <button
+                        onClick={() => deleteTask(_id)}
+                        className="flex items-center justify-center gap-2 text-xs bg-red-600 text-white font-medium px-3 py-2 cursor-pointer hover:bg-red-500 rounded-sm"
+                    >
+                        <Trash size={'15px'} />
+                        {deleteLoading ? 'Deleting...' : 'Delete'}
+                    </button>
+
                 </div>
             </div>
         </div>

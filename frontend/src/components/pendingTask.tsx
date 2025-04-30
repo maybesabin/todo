@@ -91,10 +91,10 @@ const pendingTask = () => {
                                     </h3>
                                 </div>
 
-                                <div className="flex items-center gap-4 md:-mr-4 -mr-3">
+                                <div className="flex items-center gap-4">
                                     {
                                         item.isCompleted == false ?
-                                            <div className="cursor-pointer">
+                                            <div className="cursor-pointer md:-mr-6 -mr-4">
                                                 <Edit
                                                     onClick={() => {
                                                         if (isAuthenticated) {
@@ -108,7 +108,7 @@ const pendingTask = () => {
                                                 />
                                             </div>
                                             :
-                                            <div className="text-xs border rounded-full px-2 py-1 -mr-5">
+                                            <div className="text-xs border rounded-full px-2 py-1 -mr-4">
                                                 Completed
                                             </div>
                                     }

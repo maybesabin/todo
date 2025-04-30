@@ -5,7 +5,7 @@ import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import EditTask from "../components/editTask"
 import { Checkbox } from "./ui/checkbox";
-import { PencilLine } from "lucide-react";
+import { Edit } from "lucide-react";
 
 const completedTask = () => {
 
@@ -91,14 +91,11 @@ const completedTask = () => {
                                     </h3>
                                 </div>
 
-                                <div className="flex items-center gap-4 md:-mr-4 -mr-3">
+                                <div className="flex items-center gap-4">
                                     {
                                         item.isCompleted == false ?
-                                            <div className="relative group cursor-pointer">
-                                                <h4 className="md:flex hidden absolute transition-opacity duration-200 opacity-0 group-hover:opacity-100 invisible group-hover:visible w-max -top-8 -left-5 text-xs text-white px-2 py-1 rounded-sm bg-black">
-                                                    Edit Task
-                                                </h4>
-                                                <PencilLine
+                                            <div className="cursor-pointer md:-mr-6 -mr-4">
+                                                <Edit
                                                     onClick={() => {
                                                         if (isAuthenticated) {
                                                             handleEditClick(item._id);
@@ -106,12 +103,12 @@ const completedTask = () => {
                                                             toast.error("You need to login first.");
                                                         }
                                                     }}
-                                                    size={'25px'}
-                                                    className="hover:bg-neutral-200 p-1 rounded-md"
+                                                    size={'32px'}
+                                                    className="hover:bg-neutral-100 p-2 rounded-md"
                                                 />
                                             </div>
                                             :
-                                            <div className="text-xs border rounded-full px-2 py-1 -mr-5">
+                                            <div className="text-xs border rounded-full px-2 py-1 -mr-4">
                                                 Completed
                                             </div>
                                     }

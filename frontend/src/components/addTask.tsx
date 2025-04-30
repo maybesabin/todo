@@ -19,11 +19,13 @@ const addTask = () => {
     }
 
     const ai = new GoogleGenAI({ apiKey: import.meta.env.VITE_GEMINI_API_KEY });
+    const token = localStorage.getItem("token");
+    const { fetchTasks, isAuthenticated, categories } = useGlobalContext();
     const [isGenerating, setIsGenerating] = useState(false);
     const [open, setOpen] = useState(false)
 
     const generateContent = async (title: string) => {
-        if (!title.trim()) return;
+        if (!title.trim()) return toast.error("Enter a valid task")
         setIsGenerating(true);
 
         try {
@@ -50,10 +52,6 @@ const addTask = () => {
             setIsGenerating(false)
         }
     }
-
-    const token = localStorage.getItem("token");
-
-    const { fetchTasks, isAuthenticated, categories } = useGlobalContext();
 
     const [formData, setFormData] = useState<TaskType>({
         title: "",
@@ -154,7 +152,7 @@ const addTask = () => {
                                     setOpen(false)
                                     generateContent(formData.title)
                                 }}
-                                className="cursor-pointer hover:bg-neutral-100 my-0.5 transition-all p-2 rounded-sm flex items-center gap-2 md:text-sm text-xs"
+                                className="cursor-default hover:bg-neutral-100 my-0.5 transition-all p-2 rounded-sm flex items-center gap-2 md:text-sm text-xs"
                             >
                                 <Zap color="#ec003f" className="md:size-[17px] size-[14px]" />
                                 <span className="text-rose-600">Generate with AI</span>
