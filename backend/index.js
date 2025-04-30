@@ -22,6 +22,8 @@ app.use("/api/user", authRoutes);
 app.use("/api/task", taskRoutes);
 app.use("/api/admin", adminRoutes);
 
+app.use('/uploads', express.static('uploads'));
+
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
 })

@@ -1,6 +1,10 @@
 const mongoose = require("mongoose");
 
 const userSchema = new mongoose.Schema({
+    profilePic: {
+        type: String,
+        default: ""
+    },
     username: {
         type: String,
         required: function () { return this.role !== 'admin'; }, //only required for non-admins

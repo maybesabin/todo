@@ -5,6 +5,7 @@ const User = require("../models/authModel")
 exports.signup = async (req, res) => {
     try {
         const { username, email, password } = req.body;
+        const profilePic = req.file ? `/uploads/${req.file.filename}` : ``;
 
         let user = await User.findOne({ username, email });
         if (user) {
@@ -16,7 +17,8 @@ exports.signup = async (req, res) => {
             username,
             email,
             password: hashedPassword,
-            role: 'user'
+            role: 'user',
+            profilePic
         });
 
         await newUser.save();
@@ -56,12 +58,12 @@ exports.profile = async (req, res) => {
     try {
         const userId = req.user._id;
 
-        const user = await User.findById(userId).select("username email role");
+        const user = await User.findById(userId).select("username email role profilePic");
         if (!user) {
             return res.status(400).json({ message: "User not found!" })
         }
 
-        res.status(200).json({ username: user.username, email: user.email, role: user.role });
+        res.status(200).json({ username: user.username, email: user.email, role: user.role, profilePic: user.profilePic });
     } catch (error) {
         res.status(400).json({ message: error.message })
     }

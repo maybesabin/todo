@@ -11,9 +11,10 @@ import Sidebar from "@/components/userSidebar";
 const Homeapage = () => {
 
     const { tasks, isAuthenticated } = useGlobalContext();
-    const [username, setUsername] = useState<string | null>(null);
+    const [userData, setUserData] = useState<any>([]);
     const [showSidebar, setShowSidebar] = useState(false);
     const [showSearchPopup, setShowSearchPopup] = useState(false);
+    const [filteredTasks, setFilteredTasks] = useState<any>([])
 
     useEffect(() => {
         const fetchUserData = async () => {
@@ -25,13 +26,14 @@ const Homeapage = () => {
                         'Content-Type': 'application/json'
                     }
                 })
-                setUsername(response.data.username);
+                setUserData(response.data);
             } catch (error: any) {
                 console.log(error.message)
             }
         }
         fetchUserData();
-    }, [])
+        setFilteredTasks(tasks.filter((item: any) => item.isCompleted == false))
+    }, [tasks])
 
     return (
         <div className="w-full h-screen flex items-start justify-center md:py-12 py-6 xl:px-0 px-6">
@@ -53,7 +55,7 @@ const Homeapage = () => {
                             <h1 className="flex items-center gap-4 md:text-4xl text-3xl font-semibold">
                                 Tasks
                                 <span className="text-xs bg-neutral-100 rounded-full py-1 px-2.5">
-                                    {tasks.length}
+                                    {filteredTasks.length}
                                 </span>
                             </h1>
                         </div>
@@ -70,9 +72,13 @@ const Homeapage = () => {
                                         size={'30px'}
                                         className="bg-neutral-100 rounded-sm p-1.5 md:hidden block"
                                     />
-                                    <h3 className="bg-rose-100 cursor-default h-8 w-8 rounded-full flex items-center justify-center text-rose-500 md:text-base text-sm">
-                                        {username?.charAt(0).toUpperCase()}
-                                    </h3>
+                                    {
+                                        userData.profilePic ?
+                                            <img src={`${import.meta.env.VITE_BACKEND_URI}${userData.profilePic}`} className="h-8 w-8 rounded-full object-cover" /> :
+                                            <h3 className="bg-rose-100 cursor-default h-8 w-8 rounded-full flex items-center justify-center text-rose-500 md:text-base text-sm">
+                                                {userData.username?.charAt(0).toUpperCase()}
+                                            </h3>
+                                    }
                                     <p
                                         onClick={() => {
                                             localStorage.removeItem("token");

@@ -17,6 +17,7 @@ interface Type {
     role: null | string;
     tasks: null | any[];
     updatedAt: null | string;
+    profilePic: null | string;
 }
 
 const usersList = () => {
@@ -82,13 +83,15 @@ const usersList = () => {
                             {admins?.map((admin: Type, idx) => (
                                 <TableRow key={idx} className="md:text-sm text-xs">
                                     <TableCell className="p-4 flex items-center gap-2">
-                                        <div className="h-8 w-8 bg-neutral-200 rounded-full"></div>
-                                        <div className="flex flex-col items-start">
-                                            <h4 className="font-medium">
-                                                System Admin
-                                            </h4>
-                                            <span className="text-neutral-600 text-xs">{admin.email}</span>
-                                        </div>
+                                        {
+                                            admin.profilePic ?
+                                                <img src={`${import.meta.env.VITE_BACKEND_URI}${admin.profilePic}`}
+                                                    className="h-8 w-8 rounded-full object-cover" /> :
+                                                <div className="h-8 w-8 bg-neutral-200 rounded-full"></div>
+                                        }
+                                        <h4 className="font-medium">
+                                            System Admin
+                                        </h4>
                                     </TableCell>
                                     <TableCell>
                                         <span className="bg-black text-white rounded-full px-2.5 py-0.5 capitalize">
@@ -114,7 +117,13 @@ const usersList = () => {
                             {users?.map((user: Type, idx) => (
                                 <TableRow key={idx} className="md:text-sm text-xs">
                                     <TableCell className="p-4 flex items-center gap-2">
-                                        <div className="h-8 w-8 bg-neutral-200 rounded-full"></div>
+                                        {
+                                            user.profilePic ?
+                                                <img src={`${import.meta.env.VITE_BACKEND_URI}${user.profilePic}`} className="h-8 w-8 rounded-full object-cover" /> :
+                                                <h3 className="bg-rose-100 cursor-default h-8 w-8 rounded-full flex items-center justify-center text-rose-500 md:text-base text-sm">
+                                                    {user.username?.charAt(0).toUpperCase()}
+                                                </h3>
+                                        }
                                         <div className="flex flex-col items-start">
                                             <h4 className="font-medium">
                                                 {!user.username ? 'Not available' : user.username}</h4>

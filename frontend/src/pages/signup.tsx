@@ -1,7 +1,7 @@
 import { Input } from "@/components/ui/input"
 import axios from "axios"
-import { Eye, EyeClosed } from "lucide-react"
-import { useState } from "react"
+import { Eye, EyeClosed, Upload } from "lucide-react"
+import { useEffect, useState } from "react"
 import toast from "react-hot-toast"
 import { Link, useNavigate } from "react-router-dom"
 
@@ -12,6 +12,9 @@ const signup = () => {
         password: string,
         confirmPassword: string
     }
+
+    const [file, setFile] = useState(null);
+    const [filePreview, setFilePreview] = useState<any>(null);
 
     const [formData, setFormData] = useState<User>({
         username: '',
@@ -28,31 +31,56 @@ const signup = () => {
         }))
     }
 
+    const handleFileChange = (e: any) => setFile(e.target.files[0])
+
     const [showPassword, setShowPassword] = useState<boolean | false>(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState<boolean | false>(false);
     const navigate = useNavigate();
 
     const handleSignup = async (e: React.FormEvent) => {
         e.preventDefault();
+
         if (formData.confirmPassword !== formData.password) {
-            return toast.error("Passwords do not match!")
+            return toast.error("Passwords do not match!");
         }
+
         const { username, email, password } = formData;
-        try {
-            const response = await axios.post(`${import.meta.env.VITE_BACKEND_URI}/api/user/signup`, {
-                username,
-                email,
-                password
-            })
-            if (response.status == 200) {
-                toast.success("Successfully created account!");
-                navigate('/login');
-            }
-        } catch (error) {
-            toast.error("Something went wrong.")
-            console.log(error)
+
+        const formDataToSend = new FormData();
+        formDataToSend.append("username", username);
+        formDataToSend.append("email", email);
+        formDataToSend.append("password", password);
+
+        if (file) {
+            formDataToSend.append("profilePic", file);
         }
-    }
+
+        try {
+            const response = await axios.post(
+                `${import.meta.env.VITE_BACKEND_URI}/api/user/signup`,
+                formDataToSend,
+                {
+                    headers: {
+                        "Content-Type": "multipart/form-data",
+                    },
+                }
+            );
+
+            if (response.status === 200) {
+                toast.success("Successfully created account!");
+                navigate("/login");
+            }
+        } catch (error: any) {
+            toast.error("Something went wrong.");
+            console.log(error);
+        }
+    };
+
+    useEffect(() => {
+        if (file) {
+            setFilePreview(URL.createObjectURL(file))
+        }
+    }, [file])
 
     return (
         <div className="w-full h-screen flex items-center justify-center md:py-12 py-6 xl:px-0 px-6">
@@ -63,6 +91,23 @@ const signup = () => {
                 <p className="text-neutral-400 md:text-sm text-xs -mt-5">
                     Enter the details below & create your account.
                 </p>
+
+                <label className="relative flex items-center gap-5 w-full cursor-pointer">
+                    <div className="border border-neutral-300 rounded-full h-12 w-12 md:h-16 md:w-16 flex items-center justify-center">
+                        {file ?
+                            <img src={filePreview} className="object-cover h-full w-full rounded-full" /> :
+                            <Upload color="gray" />
+                        }
+                    </div>
+                    <p className="text-[#8155d7] text-xs font-medium hover:text-purple-600">
+                        Upload profile picture
+                    </p>
+                    <input
+                        onChange={handleFileChange}
+                        type="file"
+                        className="hidden"
+                    />
+                </label>
 
                 <div className="flex flex-col items-start gap-1.5 w-full">
                     <label className="md:text-sm text-xs" htmlFor="username">Username</label>
