@@ -34,16 +34,17 @@ const taskList = () => {
         <div className="flex flex-col items-start md:gap-6 gap-4 w-full mt-4">
 
             {/* Categories */}
-            <div className="bg-neutral-100 p-1 rounded-sm flex items-center justify-between gap-2 w-full">
+            <div className="bg-neutral-100 p-1 rounded-full flex items-center justify-between gap-2 w-full relative">
                 {taskTypes.map((_) => (
                     <div
                         onClick={() => setActive(_)}
                         key={_}
-                        className={`${active == _ && "bg-white"} transition-all cursor-pointer md:font-medium md:text-sm text-xs w-1/3 md:py-2.5 py-2 text-center rounded-sm`}
+                        className={`z-50 cursor-pointer md:font-medium md:text-sm text-xs w-1/3 py-3 text-center rounded-sm`}
                     >
                         {_}
                     </div>
                 ))}
+                <div className={`${active == "All" ? "left-1" : active == "Pending" ? "left-1/3 rounded-sm" : "left-[66.25%]"} w-1/3 bg-white h-[85%] absolute z-40 top-1 rounded-full transition-all duration-300 ease-in-out`}></div>
             </div>
 
             <div className="w-full flex items-center justify-between md:text-sm text-xs font-medium">
