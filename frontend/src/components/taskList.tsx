@@ -39,12 +39,12 @@ const taskList = () => {
                     <div
                         onClick={() => setActive(_)}
                         key={_}
-                        className={`z-50 cursor-pointer md:font-medium md:text-sm text-xs w-1/3 py-3 text-center rounded-sm`}
+                        className={`z-30 cursor-pointer md:font-medium md:text-sm text-xs w-1/3 py-3 text-center rounded-sm`}
                     >
                         {_}
                     </div>
                 ))}
-                <div className={`${active == "All" ? "left-1" : active == "Pending" ? "left-1/3 rounded-sm" : "left-[66.25%]"} w-1/3 bg-white h-[85%] absolute z-40 top-1 rounded-full transition-all duration-300 ease-in-out`}></div>
+                <div className={`${active == "All" ? "left-1" : active == "Pending" ? "left-1/3 rounded-sm" : "left-[66.25%]"} w-1/3 bg-white h-[85%] absolute z-20 top-1 rounded-full transition-all duration-300 ease-in-out`}></div>
             </div>
 
             <div className="w-full flex items-center justify-between md:text-sm text-xs font-medium">
