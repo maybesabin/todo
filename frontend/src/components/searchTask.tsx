@@ -1,7 +1,10 @@
 import axios from "axios";
 import { Search, X } from "lucide-react";
-import { SetStateAction, useState } from "react";
+import React, { SetStateAction, useState } from "react";
 import { ring } from "ldrs";
+import { useGlobalContext } from "@/context/globalContext";
+import toast from "react-hot-toast";
+import { Checkbox } from "./ui/checkbox";
 
 interface PropsType {
     showSearchPopup: boolean;
@@ -15,6 +18,7 @@ const searchTask = ({ showSearchPopup, setShowSearchPopup }: PropsType) => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [searchSubmitted, setSearchSubmitted] = useState(false);
+    const { categories, fetchTasks } = useGlobalContext();
 
     const search = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -47,6 +51,28 @@ const searchTask = ({ showSearchPopup, setShowSearchPopup }: PropsType) => {
         setFilteredTasks([])
         setSearchText("")
         setSearchSubmitted(false)
+    }
+
+    const updateTask = async (taskId: string) => {
+        const token = localStorage.getItem("token")
+        const loadingToast = toast.loading("Updating task")
+        try {
+            await axios.put(`${import.meta.env.VITE_BACKEND_URI}/api/task/complete/${taskId}`, {},
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        'Content-Type': "application/json"
+                    }
+                })
+            toast.success("Updated task!")
+            fetchTasks();
+            setShowSearchPopup(false);
+        } catch (error: any) {
+            console.log(error.message)
+            toast.error(error.message)
+        } finally {
+            toast.dismiss(loadingToast)
+        }
     }
 
     return (
@@ -102,20 +128,40 @@ const searchTask = ({ showSearchPopup, setShowSearchPopup }: PropsType) => {
                     ) : error ? (
                         <div className="text-red-500 text-xs w-full text-center">{error}</div>
                     ) : filteredTasks.length > 0 ? (
-                        <div className="flex flex-col items-start gap-4 md:text-sm text-xs">
-                            {filteredTasks.map((item: any, idx: number) => (
-                                <div
-                                    key={idx}
-                                    className="flex flex-col items-start gap-2 rounded-lg border p-3 w-full"
-                                >
-                                    <h4 className="font-medium first-letter:capitalize">
-                                        {item.title}
-                                    </h4>
-                                    <p className="text-neutral-400 text-xs">
-                                        {item.description}
-                                    </p>
-                                </div>
-                            ))}
+                        <div className="flex flex-col items-start gap-4 md:text-sm text-xs w-full">
+                            {filteredTasks.map((item: any, idx: number) => {
+
+                                // Find matching category
+                                const matchingCategory = categories.find(
+                                    (category: any) => category.title.toLowerCase() === item.category?.toLowerCase()
+                                );
+                                return (
+                                    <div
+                                        key={idx}
+                                        className="flex items-center justify-between gap-6 rounded-lg border md:p-3 p-1.5 w-full"
+                                    >
+                                        <div className="flex items-center gap-2">
+                                            <Checkbox
+                                                onClick={() => updateTask(item._id)}
+                                                checked={item.isCompleted}
+                                            />
+                                            <div className="bg-neutral-100 rounded-full h-9 w-9 flex items-center justify-center">
+                                                {matchingCategory?.icon && React.cloneElement(matchingCategory.icon, {
+                                                    className: "size-[33px] p-2"
+                                                })}
+                                            </div>
+                                            <h4 className="font-medium first-letter:capitalize">
+                                                {item.title}
+                                            </h4>
+                                        </div>
+                                        <p className="text-neutral-800 rounded-full text-[0.6rem] border px-2 py-1">
+                                            {
+                                                item.isCompleted == true ? "Completed" : "Incomplete"
+                                            }
+                                        </p>
+                                    </div>
+                                )
+                            })}
                         </div>
                     ) : (
                         <div className="text-neutral-500 text-sm text-center w-full">
