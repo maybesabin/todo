@@ -1,19 +1,23 @@
 import Card from "../components/dashboardCard"
-import { Check, UserRoundCog, Users } from "lucide-react"
+import { BadgeCheck, ClipboardList, Clock, UserRoundCog, Users } from "lucide-react"
 import { useEffect, useState } from "react"
 import axios from "axios"
 import { ring } from 'ldrs'
+import { useGlobalContext } from "@/context/globalContext"
 
 const cardContainer = () => {
     const [error, setError] = useState<null | string>(null);
     const [loading, setLoading] = useState(false);
-    const [users, setUsers] = useState<null | []>([]);
-    const [admins, setAdmins] = useState<null | []>([]);
-    const [totalTasks, setTotalTasks] = useState(0);
+    const [users, setUsers] = useState<any[]>([]);
+    const [admins, setAdmins] = useState<any[]>([]);
+    const [tasks, setTasks] = useState({
+        total: 0,
+        pending: 0,
+        completed: 0
+    })
+    const { token } = useGlobalContext()
 
     const fetchUsers = async () => {
-        const token = localStorage.getItem("token")
-        setLoading(true)
         try {
             const response = await axios.get(`${import.meta.env.VITE_BACKEND_URI}/api/admin/users`, {
                 headers: {
@@ -26,29 +30,52 @@ const cardContainer = () => {
         } catch (error: any) {
             console.log(error.message)
             setError(error.message)
-        } finally {
-            setLoading(false)
         }
     }
 
-    useEffect(() => { fetchUsers() }, [])
-    useEffect(() => {
-        const calculateTotalTasks = () => {
-            let total = 0;
-            users?.forEach((item: any) => {
-                total += item.tasks.length
+    const fetchTasks = async () => {
+        try {
+            const response = await axios.get(`${import.meta.env.VITE_BACKEND_URI}/api/admin/tasks`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
             })
 
-            setTotalTasks(total);
-        }
-        calculateTotalTasks();
-    }, [users])
-    ring.register()
+            let tasks = response.data.tasks || [];
 
+            setTasks({
+                total: tasks.length,
+                pending: tasks.filter((item: any) => !item.isCompleted).length,
+                completed: tasks.filter((item: any) => item.isCompleted).length,
+            })
+        } catch (error: any) {
+            console.log(error.message)
+            setError(error.message)
+        }
+    }
+
+    useEffect(() => {
+        const fetchAllData = async () => {
+            try {
+                setLoading(true)
+                await Promise.all([fetchUsers(), fetchTasks()])
+            } catch (err) {
+                console.log(err)
+            } finally {
+                setLoading(false)
+            }
+        }
+        fetchAllData()
+    }, [])
+
+    ring.register()
     const cards = [
-        { title: "Total Tasks", icon: Check, growth: 10, number: totalTasks },
-        { title: "Active Users", icon: Users, growth: 10, number: users?.length },
-        { title: "Admins", icon: UserRoundCog, growth: 10, number: admins?.length }
+        { title: "Total Users", icon: Users, growth: 0, number: users?.length },
+        { title: "Admins", icon: UserRoundCog, growth: 0, number: admins?.length },
+        { title: "Total Tasks", icon: ClipboardList, growth: 0, number: tasks.total },
+        { title: "Pending Tasks", icon: Clock, growth: 0, number: tasks.pending },
+        { title: "Completed Tasks", icon: BadgeCheck, growth: 0, number: tasks.completed }
     ]
     return (
         <div className="w-full grid xl:grid-cols-4 lg:grid-cols-3 gap-4">

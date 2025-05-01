@@ -7,6 +7,7 @@ const {
     getUsers,
     getTasks,
     getUser,
+    getUserTasks,
     deleteUser,
     updateUser
 } = require("../controllers/adminController")
@@ -23,5 +24,6 @@ router.put("/user/:userId", authMiddleware, adminAuthMiddleware, updateUser)
 //other routes
 router.get("/users", authMiddleware, adminAuthMiddleware, getUsers)
 router.get("/tasks", authMiddleware, adminAuthMiddleware, getTasks)
+router.get("/user-tasks/:userId", authMiddleware, adminAuthMiddleware, getUserTasks)
 
 module.exports = router;

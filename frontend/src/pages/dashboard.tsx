@@ -1,15 +1,10 @@
-import Dashboard from "@/container/dashboard"
-import { useState } from "react"
 import Sidebar from "../components/adminSidebar"
 import { LogOut } from "lucide-react";
-import Settings from "../container/settings";
-import Users from "../container/users"
-import { useNavigate } from "react-router-dom";
-import { useGlobalContext } from "@/context/globalContext";
+import { Outlet, useLocation, useNavigate } from "react-router-dom";
+import { useGlobalContext } from "@/context/globalContext"
 
 const dashboard = () => {
-
-    const [active, setActive] = useState("dashboard");
+    const location = useLocation();
     const navigate = useNavigate();
     const { setToken } = useGlobalContext();
     const handleLogout = () => {
@@ -18,22 +13,32 @@ const dashboard = () => {
         navigate("/login")
     }
 
+    const getPageTitle = () => {
+        const pathParts = location.pathname.split("/").filter(Boolean); // removes empty strings
+
+        if (pathParts.length === 1 && pathParts[0] === "dashboard") {
+            return "Dashboard";
+        }
+
+        if (pathParts.includes("user")) {
+            return "User Profile";
+        }
+
+        return pathParts[pathParts.length - 1]
+            .replace(/-/g, " ")
+            .replace(/\b\w/g, (l) => l.toUpperCase());
+    };
+
     return (
         <div className="flex items-start lg:gap-4 md:gap-2 gap-0 w-full">
-            <Sidebar
-                active={active}
-                setActive={setActive}
-            />
+            <Sidebar />
 
             <div className="lg:w-[calc(100%-288px)] md:w-[calc(100%-224px)] w-[calc(100%-56px)] lg:p-6 p-3">
                 <h1 className="mb-8 tracking-tighter font-medium lg:text-4xl text-2xl text-neutral-800">
-                    {active.charAt(0).toUpperCase() + active.slice(1)}
+                    {getPageTitle()}
                 </h1>
-                {
-                    active == "dashboard" ? <Dashboard /> :
-                        active == "settings" ? <Settings /> :
-                            active == "users" ? <Users /> : ''
-                }
+
+                <Outlet />
             </div>
 
             {/* Logout */}

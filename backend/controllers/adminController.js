@@ -97,6 +97,24 @@ exports.getUser = async (req, res) => {
     }
 }
 
+exports.getUserTasks = async (req, res) => {
+    try {
+        const { userId } = req.params;
+
+        const tasks = await Task.find({ user: userId })
+
+        if (!tasks || tasks.length == 0) {
+            return res.status(400).json({ message: "No tasks found!" })
+        }
+        res.status(200).json({
+            message: "Tasks fetched successfully!",
+            tasks,
+        });
+    } catch (error) {
+        res.status(400).json({ message: error.message })
+    }
+}
+
 exports.deleteUser = async (req, res) => {
     try {
         const { userId } = req.params;

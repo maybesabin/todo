@@ -4,6 +4,10 @@ import Homepage from "@/pages/homepage"
 import Signup from "../pages/signup"
 import Dashboard from "../pages/dashboard"
 import ProtectedRoute from "@/lib/protectedRoutes"
+import EditUser from "@/container/editUser"
+import UsersList from "../components/usersList"
+import Settings from "../container/settings"
+import DashboardComponent from "../container/dashboard"
 
 const AppRouter = () => {
     return (
@@ -23,7 +27,14 @@ const AppRouter = () => {
 
                 {/* Protected route for admins */}
                 <Route element={<ProtectedRoute allowedRoles={["admin"]} />}>
-                    <Route path="/dashboard" element={<Dashboard />} />
+                    <Route path="/dashboard" element={<Dashboard />}>
+                        <Route index element={<DashboardComponent />} />
+                        <Route path="users">
+                            <Route index element={<UsersList />} />
+                            <Route path="user/:id" element={<EditUser />} />
+                        </Route>
+                        <Route path="settings" element={<Settings />} />
+                    </Route>
                 </Route>
 
                 {/* Catch all - redirect to login */}

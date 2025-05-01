@@ -1,7 +1,7 @@
 interface DashboardCardProps {
     title: string;
     icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
-    number: number | null | undefined;
+    number: number | string | undefined;
     growth: number | null | undefined;
 }
 
