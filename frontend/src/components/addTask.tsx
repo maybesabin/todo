@@ -19,8 +19,7 @@ const addTask = () => {
     }
 
     const ai = new GoogleGenAI({ apiKey: import.meta.env.VITE_GEMINI_API_KEY });
-    const token = localStorage.getItem("token");
-    const { fetchTasks, isAuthenticated, categories } = useGlobalContext();
+    const { fetchTasks, isAuthenticated, categories, token } = useGlobalContext();
     const [isGenerating, setIsGenerating] = useState(false);
     const [open, setOpen] = useState(false)
 
@@ -80,7 +79,7 @@ const addTask = () => {
                 {
                     headers: {
                         Authorization: `Bearer ${token}`,
-                        'Content-Type': 'multipart/form-data'
+                        'Content-Type': 'application/json'
                     }
                 })
             if (response.status == 200) {
