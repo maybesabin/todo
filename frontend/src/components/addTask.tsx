@@ -80,7 +80,7 @@ const addTask = () => {
                 {
                     headers: {
                         Authorization: `Bearer ${token}`,
-                        'Content-Type': 'application/json'
+                        'Content-Type': 'multipart/form-data'
                     }
                 })
             if (response.status == 200) {

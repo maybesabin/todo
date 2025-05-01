@@ -4,14 +4,21 @@ const User = require("../models/authModel")
 
 exports.signup = async (req, res) => {
     try {
-        const { username, email, password } = req.body;
-        const profilePic = req.file ? `/uploads/${req.file.filename}` : ``;
+        console.log("Request body:", req.body);
+        console.log("File:", req.file);
 
-        let user = await User.findOne({ username, email });
+        const { username, email, password } = req.body;
+
+        // Get profile pic URL from Cloudinary
+        const profilePic = req.file ? req.file.path : '';
+
+        // Check if user exists
+        let user = await User.findOne({ $or: [{ username }, { email }] });
         if (user) {
             return res.status(400).json({ message: "User with this email/username already exists" });
         }
 
+        // Create new user
         const hashedPassword = await bcrypt.hash(password, 10);
         const newUser = new User({
             username,
@@ -22,11 +29,15 @@ exports.signup = async (req, res) => {
         });
 
         await newUser.save();
-        res.status(200).json({ message: "User created successfully!" })
+        res.status(200).json({ message: "User created successfully!" });
     } catch (error) {
-        res.status(400).json({ message: error.message })
+        console.error("Signup error:", error);
+        res.status(500).json({
+            message: "Error creating user",
+            error: error.message
+        });
     }
-}
+};
 
 exports.login = async (req, res) => {
     try {
@@ -56,14 +67,17 @@ exports.login = async (req, res) => {
 
 exports.profile = async (req, res) => {
     try {
-        const userId = req.user._id;
-
-        const user = await User.findById(userId).select("username email role profilePic");
+        const user = await User.findById(req.user)
         if (!user) {
             return res.status(400).json({ message: "User not found!" })
         }
 
-        res.status(200).json({ username: user.username, email: user.email, role: user.role, profilePic: user.profilePic });
+        res.status(200).json({
+            username: user.username,
+            email: user.email,
+            role: user.role,
+            profilePic: user.profilePic
+        });
     } catch (error) {
         res.status(400).json({ message: error.message })
     }

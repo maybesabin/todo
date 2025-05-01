@@ -39,17 +39,15 @@ const login = () => {
         const url = `${import.meta.env.VITE_BACKEND_URI}/api/${loginAsAdmin ? 'admin' : 'user'}/login`;
         try {
             const response = await axios.post(url, formData);
-            if (response.status === 200) {
-                localStorage.setItem("token", response.data.token);
-                setToken(response.data.token);
-                setIsAuthenticated(true)
-                toast.success("Logged in successfully!");
+            localStorage.setItem("token", response.data.token);
+            setToken(response.data.token);
+            setIsAuthenticated(true)
+            toast.success("Logged in successfully!");
 
-                if (response.data.role === 'user') {
-                    navigate('/');
-                } else {
-                    navigate('/dashboard');
-                }
+            if (response.data.role === 'user') {
+                navigate('/');
+            } else {
+                navigate('/dashboard');
             }
         } catch (error) {
             toast.error("Something went wrong.");

@@ -2,17 +2,18 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { Outlet, Navigate, useLocation } from "react-router-dom";
 import { ring } from "ldrs";
+import { useGlobalContext } from "@/context/globalContext";
 
 const ProtectedRoute = ({ allowedRoles }: { allowedRoles: string[] }) => {
     const [role, setRole] = useState<string | null>(null);
     const [loading, setLoading] = useState(true);
     const location = useLocation();
+    const { token } = useGlobalContext()
     ring.register();
 
     useEffect(() => {
         const fetchUserData = async () => {
             try {
-                const token = localStorage.getItem("token");
                 if (!token) {
                     setRole(null);
                     return;
