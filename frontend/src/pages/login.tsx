@@ -6,6 +6,7 @@ import toast from "react-hot-toast"
 import { Link, useNavigate } from "react-router-dom"
 import { Checkbox } from "@/components/ui/checkbox"
 import { useGlobalContext } from "@/context/globalContext"
+import { ring } from "ldrs";
 
 const login = () => {
 
@@ -14,6 +15,8 @@ const login = () => {
         password: string,
     }
 
+    ring.register();
+    const [loading, setLoading] = useState(false)
     const { setToken, setIsAuthenticated } = useGlobalContext()
 
     const [formData, setFormData] = useState<User>({
@@ -36,12 +39,14 @@ const login = () => {
 
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
+        setLoading(true)
         const url = `${import.meta.env.VITE_BACKEND_URI}/api/${loginAsAdmin ? 'admin' : 'user'}/login`;
         try {
             const response = await axios.post(url, formData);
             localStorage.setItem("token", response.data.token);
             setToken(response.data.token);
             setIsAuthenticated(true)
+            setLoading(false)
             toast.success("Logged in successfully!");
 
             if (response.data.role === 'user') {
@@ -52,6 +57,8 @@ const login = () => {
         } catch (error) {
             toast.error("Something went wrong.");
             console.log(error);
+        } finally {
+            setLoading(false)
         }
     };
 
@@ -105,7 +112,22 @@ const login = () => {
                 </div>
 
                 <button className="w-full text-white bg-[#8155d7] py-2.5 rounded-lg md:text-sm text-xs cursor-pointer hover:bg-purple-700 transition-all">
-                    Sign In
+                    {
+                        loading ?
+                            <div className="w-full flex items-center justify-center gap-2">
+                                {/* @ts-ignore */}
+                                <l-ring
+                                    size="20"
+                                    stroke="2"
+                                    bg-opacity="0"
+                                    speed="2"
+                                    color="white"
+                                />
+                                <span>Signing In</span>
+                            </div>
+                            :
+                            <span>Sign In</span>
+                    }
                 </button>
 
                 <h3 className="md:text-sm text-xs w-full text-center">

@@ -84,9 +84,13 @@ const userSidebar = ({ showSidebar, setShowSidebar, showSearchPopup, setShowSear
                                 <X size={'20px'} onClick={() => setShowSidebar(!showSidebar)} />
                             </div>
                             <div className="flex items-center gap-2">
-                                <div className="text-rose-800 bg-white rounded-full borde border-rose-500 h-14 w-14 flex items-center justify-center">
-                                    {userData.username?.charAt(0).toUpperCase()}
-                                </div>
+                                {
+                                    userData.profilePic ?
+                                        <img src={userData.profilePic} className="h-14 w-14 rounded-full object-cover" /> :
+                                        <h3 className="bg-rose-100 cursor-default h-14 w-14 rounded-full flex items-center justify-center text-rose-800 border-rose-500 border md:text-base text-sm">
+                                            {userData.username?.charAt(0).toUpperCase()}
+                                        </h3>
+                                }
                                 <div className="flex flex-col items-start">
                                     <h2 className="font-medium text-lg">{userData.username}</h2>
                                     <p className="text-xs font-light -mt-1">{userData.email}</p>

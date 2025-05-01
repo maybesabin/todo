@@ -4,6 +4,7 @@ import { Eye, EyeClosed, Upload } from "lucide-react"
 import { useEffect, useState } from "react"
 import toast from "react-hot-toast"
 import { Link, useNavigate } from "react-router-dom"
+import { ring } from "ldrs";
 
 const signup = () => {
     interface User {
@@ -13,8 +14,10 @@ const signup = () => {
         confirmPassword: string
     }
 
+    ring.register();
     const [file, setFile] = useState(null);
     const [filePreview, setFilePreview] = useState<any>(null);
+    const [loading, setLoading] = useState(false)
 
     const [formData, setFormData] = useState<User>({
         username: '',
@@ -44,6 +47,7 @@ const signup = () => {
             return toast.error("Passwords do not match!");
         }
 
+        setLoading(true)
         const { username, email, password } = formData;
 
         const formDataToSend = new FormData();
@@ -56,7 +60,7 @@ const signup = () => {
         }
 
         try {
-            const response = await axios.post(
+            await axios.post(
                 `${import.meta.env.VITE_BACKEND_URI}/api/user/signup`,
                 formDataToSend,
                 {
@@ -66,13 +70,14 @@ const signup = () => {
                 }
             );
 
-            if (response.status === 200) {
-                toast.success("Successfully created account!");
-                navigate("/login");
-            }
+            setLoading(false)
+            toast.success("Successfully created your account!")
+            navigate("/login");
         } catch (error: any) {
             toast.error("Something went wrong.");
             console.log(error);
+        } finally {
+            setLoading(false)
         }
     };
 
@@ -189,7 +194,22 @@ const signup = () => {
                 <button
                     type="submit"
                     className="w-full text-white bg-[#8155d7] py-2.5 rounded-lg md:text-sm text-xs cursor-pointer hover:bg-purple-700 transition-all">
-                    Create an account
+                    {
+                        loading ?
+                            <div className="w-full flex items-center justify-center gap-2">
+                                {/* @ts-ignore */}
+                                <l-ring
+                                    size="20"
+                                    stroke="2"
+                                    bg-opacity="0"
+                                    speed="2"
+                                    color="white"
+                                />
+                                <span>Creating your account</span>
+                            </div>
+                            :
+                            <span>Create an account</span>
+                    }
                 </button>
 
                 <h3 className="md:text-sm text-xs w-full text-center">

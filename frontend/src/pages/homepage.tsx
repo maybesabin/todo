@@ -2,7 +2,7 @@ import { useGlobalContext } from "../context/globalContext"
 import AddTask from "../components/addTask"
 import { useEffect, useState } from "react";
 import TaskList from "../components/taskList"
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { Menu, Sparkles } from "lucide-react";
 import SearchTask from "../components/searchTask"
@@ -10,11 +10,12 @@ import Sidebar from "@/components/userSidebar";
 
 const Homeapage = () => {
 
-    const { tasks, isAuthenticated } = useGlobalContext();
+    const { tasks, isAuthenticated, setToken } = useGlobalContext();
     const [userData, setUserData] = useState<any>([]);
     const [showSidebar, setShowSidebar] = useState(false);
     const [showSearchPopup, setShowSearchPopup] = useState(false);
     const [filteredTasks, setFilteredTasks] = useState<any>([])
+    const navigate = useNavigate()
 
     useEffect(() => {
         const fetchUserData = async () => {
@@ -74,15 +75,16 @@ const Homeapage = () => {
                                     />
                                     {
                                         userData.profilePic ?
-                                            <img src={`${import.meta.env.VITE_BACKEND_URI}${userData.profilePic}`} className="h-8 w-8 rounded-full object-cover" /> :
+                                            <img src={userData.profilePic} className="h-8 w-8 rounded-full object-cover" /> :
                                             <h3 className="bg-rose-100 cursor-default h-8 w-8 rounded-full flex items-center justify-center text-rose-500 md:text-base text-sm">
                                                 {userData.username?.charAt(0).toUpperCase()}
                                             </h3>
                                     }
                                     <p
                                         onClick={() => {
+                                            setToken(null)
                                             localStorage.removeItem("token");
-                                            window.location.reload();
+                                            navigate("/login")
                                         }}
                                         className="cursor-pointer md:text-sm text-xs md:block hidden text-neutral-500 hover:text-black">
                                         Logout
