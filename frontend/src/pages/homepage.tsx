@@ -3,35 +3,21 @@ import AddTask from "../components/addTask"
 import { useEffect, useState } from "react";
 import TaskList from "../components/taskList"
 import { Link, useNavigate } from "react-router-dom";
-import axios from "axios";
 import { Menu, Sparkles } from "lucide-react";
 import SearchTask from "../components/searchTask"
 import Sidebar from "@/components/userSidebar";
+import UserProfile from "@/components/userProfile";
 
 const Homeapage = () => {
 
-    const { tasks, isAuthenticated, setToken } = useGlobalContext();
-    const [userData, setUserData] = useState<any>([]);
+    const { tasks, isAuthenticated, setToken, fetchUserData, userData } = useGlobalContext();
     const [showSidebar, setShowSidebar] = useState(false);
     const [showSearchPopup, setShowSearchPopup] = useState(false);
     const [filteredTasks, setFilteredTasks] = useState<any>([])
+    const [active, setActive] = useState("Tasks")
     const navigate = useNavigate()
 
     useEffect(() => {
-        const fetchUserData = async () => {
-            try {
-                const token = localStorage.getItem("token");
-                const response = await axios.get(`${import.meta.env.VITE_BACKEND_URI}/api/user/profile`, {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                        'Content-Type': 'application/json'
-                    }
-                })
-                setUserData(response.data);
-            } catch (error: any) {
-                console.log(error.message)
-            }
-        }
         fetchUserData();
         setFilteredTasks(tasks.filter((item: any) => item.isCompleted == false))
     }, [tasks])
@@ -69,14 +55,24 @@ const Homeapage = () => {
                                         setShowSearchPopup={setShowSearchPopup}
                                     />
                                     <Menu
-                                        onClick={() => setShowSidebar(!showSidebar)}
+                                        onClick={() => {
+                                            setShowSidebar(!showSidebar)
+                                            setActive("Profile")
+                                        }}
                                         size={'30px'}
                                         className="bg-neutral-100 rounded-sm p-1.5 md:hidden block"
                                     />
                                     {
                                         userData.profilePic ?
-                                            <img src={userData.profilePic} className="h-8 w-8 rounded-full object-cover" /> :
-                                            <h3 className="bg-rose-100 cursor-default h-8 w-8 rounded-full flex items-center justify-center text-rose-500 md:text-base text-sm">
+                                            <img
+                                                onClick={() => setActive("Profile")}
+                                                src={userData.profilePic}
+                                                className="h-8 w-8 rounded-full object-cover cursor-pointer"
+                                            /> :
+                                            <h3
+                                                onClick={() => setActive("Profile")}
+                                                className="bg-rose-100 cursor-pointer    h-8 w-8 rounded-full flex items-center justify-center text-rose-500 md:text-base text-sm"
+                                            >
                                                 {userData.username?.charAt(0).toUpperCase()}
                                             </h3>
                                     }
@@ -99,10 +95,15 @@ const Homeapage = () => {
                         }
                     </div>
 
-                    <AddTask />
-
-                    {/* Task List */}
-                    <TaskList />
+                    {
+                        active == "Tasks" ?
+                            <>
+                                <AddTask />
+                                <TaskList />
+                            </>
+                            :
+                            <UserProfile setActive={setActive} />
+                    }
                 </div>
 
                 {/* Overlay */}

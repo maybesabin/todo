@@ -82,3 +82,44 @@ exports.profile = async (req, res) => {
         res.status(400).json({ message: error.message })
     }
 }
+
+exports.updateProfile = async (req, res) => {
+    try {
+        const { username, email, profilePic, password } = req.body;
+        const user = req.user;
+
+        const currentUser = await User.findOne({ _id: user._id, role: 'user' }).select("-password");
+        if (!currentUser) {
+            return res.status(400).json({ message: "User not found!" });
+        }
+
+        const usernameExists = await User.findOne({ username, role: 'user', _id: { $ne: user._id } });
+        if (usernameExists) {
+            return res.status(400).json({ message: "Username already in use!" });
+        }
+
+        const emailExists = await User.findOne({ email, role: 'user', _id: { $ne: user._id } });
+        if (emailExists) {
+            return res.status(400).json({ message: "Email already in use!" });
+        }
+
+        const isMatch = await bcrypt.compare(password, user.password);
+        if (!isMatch) {
+            return res.status(400).json({ message: "Incorrect credentials!" });
+        }
+
+        currentUser.username = username;
+        currentUser.email = email;
+
+        if (req.file && req.file.path) {
+            currentUser.profilePic = req.file.path;
+        }
+
+        await currentUser.save();
+
+        res.status(200).json({ message: "Profile updated successfully", user: currentUser });
+
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};

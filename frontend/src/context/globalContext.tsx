@@ -19,6 +19,8 @@ interface GlobalContextPropsType {
     error: string | null;
     setToken: React.Dispatch<SetStateAction<string | null>>;
     token: string | null;
+    userData: any;
+    fetchUserData: () => Promise<void>;
 }
 
 // create context
@@ -32,6 +34,7 @@ export const GlobalProvider = ({ children }: { children: ReactNode }) => {
     const [tasks, setTasks] = useState<Task[]>([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<null | string>(null);
+    const [userData, setUserData] = useState<any>([])
 
     const fetchTasks = async () => {
         if (!token) return;
@@ -63,8 +66,23 @@ export const GlobalProvider = ({ children }: { children: ReactNode }) => {
         { title: 'Miscellaneous', icon: <Package /> },
     ];
 
+    const fetchUserData = async () => {
+        try {
+            const response = await axios.get(`${import.meta.env.VITE_BACKEND_URI}/api/user/profile`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            })
+            setUserData(response.data);
+        } catch (error: any) {
+            console.log(error.message)
+        }
+    }
+
     useEffect(() => {
         fetchTasks();
+        fetchUserData();
     }, [])
 
     useEffect(() => {
@@ -89,7 +107,9 @@ export const GlobalProvider = ({ children }: { children: ReactNode }) => {
             loading,
             error,
             setToken,
-            token
+            token,
+            userData,
+            fetchUserData
         }}>
             {children}
         </GlobalContext.Provider>
