@@ -13,9 +13,14 @@ exports.signup = async (req, res) => {
         const profilePic = req.file ? req.file.path : '';
 
         // Check if user exists
-        let user = await User.findOne({ $or: [{ username }, { email }] });
-        if (user) {
-            return res.status(400).json({ message: "User with this email/username already exists" });
+        let checkEmail = await User.findOne({ email })
+        if (checkEmail) {
+            return res.status(400).json({ message: "User with this email already exists" });
+        }
+
+        let checkUsername = await User.findOne({ username })
+        if (checkUsername) {
+            return res.status(400).json({ message: "User with this username already exists" });
         }
 
         // Create new user
@@ -50,7 +55,7 @@ exports.login = async (req, res) => {
 
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
-            return res.status(400).json({ message: "Passwords do not match." })
+            return res.status(400).json({ message: "Incorrect credentials." })
         }
 
         const token = jwt.sign(
