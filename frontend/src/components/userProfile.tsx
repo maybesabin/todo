@@ -24,14 +24,18 @@ const UserProfile = ({ setActive }: { setActive: React.Dispatch<SetStateAction<s
         setLoading(true)
 
         const formDataToSend = new FormData();
-        formDataToSend.append("username", userData.username);
-        formDataToSend.append("email", userData.email);
-        formDataToSend.append("password", formData.password);
+        if (formData.username) {
+            formDataToSend.append("username", formData.username);
+        }
+        if (formData.email) {
+            formDataToSend.append("email", formData.email);
+        }
+        if (formData.password) {
+            formDataToSend.append("password", formData.password);
+        }
 
         if (file) {
             formDataToSend.append("profilePic", file);
-        } else {
-            formDataToSend.append("profilePic", userData.profilePic)
         }
 
         try {

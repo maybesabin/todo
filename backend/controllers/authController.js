@@ -93,14 +93,20 @@ exports.updateProfile = async (req, res) => {
             return res.status(400).json({ message: "User not found!" });
         }
 
-        const usernameExists = await User.findOne({ username, role: 'user', _id: { $ne: user._id } });
-        if (usernameExists) {
-            return res.status(400).json({ message: "Username already in use!" });
+        if (username) {
+            const usernameExists = await User.findOne({ username, role: 'user', _id: { $ne: user._id } });
+            if (usernameExists) {
+                return res.status(400).json({ message: "Username already in use!" });
+            }
+            currentUser.username = username;
         }
 
-        const emailExists = await User.findOne({ email, role: 'user', _id: { $ne: user._id } });
-        if (emailExists) {
-            return res.status(400).json({ message: "Email already in use!" });
+        if (email) {
+            const emailExists = await User.findOne({ email, role: 'user', _id: { $ne: user._id } });
+            if (emailExists) {
+                return res.status(400).json({ message: "Email already in use!" });
+            }
+            currentUser.email = email;
         }
 
         const isMatch = await bcrypt.compare(password, user.password);
