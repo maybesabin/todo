@@ -114,7 +114,9 @@ npm install
 ---
 
 ## 📸 Screenshots
-![Todo App Screenshot](./frontend/src/assets/screenshot.png)
+![User Interface](./frontend/src/assets/screenshot%202.png)
+
+![Admin Interface](./frontend/src/assets/screenshot%201.png)
 
 ---
 
