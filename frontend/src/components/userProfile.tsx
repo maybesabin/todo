@@ -53,8 +53,8 @@ const UserProfile = ({ setActive }: { setActive: React.Dispatch<SetStateAction<s
             fetchUserData();
             setFile(null);
         } catch (error: any) {
-            console.log(error.message);
-            toast.error(error.response.data.message)
+            console.log(error)
+            toast.error(error.response?.data?.message || error.message || "Something went wrong");
         } finally {
             setLoading(false)
         }

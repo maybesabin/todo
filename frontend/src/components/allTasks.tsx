@@ -33,7 +33,7 @@ const allTasks = () => {
             fetchTasks();
         } catch (error: any) {
             console.log(error.message)
-            toast.error(error.message)
+            toast.error(error.response?.data?.message || error.message || "Something went wrong");
         } finally {
             toast.dismiss(loadingToast)
         }

@@ -93,7 +93,7 @@ const addTask = () => {
             }
         } catch (error: any) {
             console.log(error.message)
-            toast.error("Failed to add task.")
+            toast.error(error.response?.data?.message || error.message || "Something went wrong");
         } finally {
             toast.dismiss(loadingToast)
         }

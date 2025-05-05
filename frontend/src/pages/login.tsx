@@ -54,9 +54,9 @@ const login = () => {
             } else {
                 navigate('/dashboard');
             }
-        } catch (error) {
-            toast.error("Something went wrong.");
+        } catch (error: any) {
             console.log(error);
+            toast.error(error.response?.data?.message || error.message || "Something went wrong");
         } finally {
             setLoading(false)
         }

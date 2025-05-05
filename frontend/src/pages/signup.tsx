@@ -74,8 +74,8 @@ const signup = () => {
             toast.success("Successfully created your account!")
             navigate("/login");
         } catch (error: any) {
-            toast.error("Something went wrong.");
             console.log(error);
+            toast.error(error.response?.data?.message || error.message || "Something went wrong");
         } finally {
             setLoading(false)
         }
