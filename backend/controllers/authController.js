@@ -12,13 +12,12 @@ exports.signup = async (req, res) => {
         // Get profile pic URL from Cloudinary
         const profilePic = req.file ? req.file.path : '';
 
-        // Check if user exists
-        let checkEmail = await User.findOne({ email })
+        const checkEmail = await User.findOne({ email })
         if (checkEmail) {
             return res.status(400).json({ message: "User with this email already exists" });
         }
 
-        let checkUsername = await User.findOne({ username })
+        const checkUsername = await User.findOne({ username })
         if (checkUsername) {
             return res.status(400).json({ message: "User with this username already exists" });
         }
