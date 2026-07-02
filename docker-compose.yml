@@ -4,7 +4,7 @@ services:
 
   mongodb:
     image: mongo:7
-    container_name: mongodb
+    container_name: mongodb2
 
     restart: always
 
